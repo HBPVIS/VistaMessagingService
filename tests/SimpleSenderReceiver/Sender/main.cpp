@@ -8,9 +8,11 @@
 #include <VmsMsgSender.h>
 #include <VmsEndpointFactory.h>
 
-
 #include <VistaInterProcComm/Concurrency/VistaThreadLoop.h>
 
+#include <VistaBase/VistaTimeUtils.h>
+
+#include <stdio.h>
 /*
   This demo illustrates the use of VMS for a simple sender
   receiver pair.
@@ -186,6 +188,9 @@ int main(int argc, char *argv[])
 		pReceiver = new ReceiverThread(&oContext, strServiceURL);
 		pReceiver->Run();
 		printf("\tDONE!\n");
+		//wait a little here in order to allow the receiver imp to
+		//get up and running before we try to connect to it!
+		VistaTimeUtils::Sleep(2000);
 	}
 
 	//create sender endpoint using the input parameter as URLs

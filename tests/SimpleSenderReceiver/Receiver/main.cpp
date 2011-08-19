@@ -7,6 +7,8 @@
 #include <VmsMsgReceiver.h>
 #include <VmsEndpointFactory.h>
 
+#include <stdio.h>
+
 /**
  * main routine for standalon inter-process receiver
  */
