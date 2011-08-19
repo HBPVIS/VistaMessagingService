@@ -54,7 +54,7 @@ public:
 	virtual ~VmsStringMsg();
 
 	/**
-	 * "virtual c'tor" needed for proper deserialization
+	 * factory method
 	 */
 	virtual VmsMsg *CreateInstance() const;
 
