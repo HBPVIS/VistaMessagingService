@@ -8,11 +8,11 @@
 #include <VmsMsgSender.h>
 #include <VmsEndpointFactory.h>
 
+#include <VistaBase/VistaTimeUtils.h>
 #include <VistaInterProcComm/Concurrency/VistaThreadLoop.h>
 
-#include <VistaBase/VistaTimeUtils.h>
-
 #include <stdio.h>
+
 /*
   This demo illustrates the use of VMS for a simple sender
   receiver pair.
@@ -63,7 +63,7 @@ public:
 		while(!done)
 		{
 			//so here we actually receive a message using our connection
-			//endpoint. Its as simple as this: just pull it out. The
+			//endpoint. It's as simple as this: just pull it out. The
 			//call will block until a message is received.
 			VmsMsg *pIncoming = pReceiver->ReceiveMsg();
 			assert(pIncoming != NULL);
@@ -172,7 +172,7 @@ int main(int argc, char *argv[])
 	
 	//register message types
 	//NOTE: make sure that this is done consistently - i.e. in the same order -
-	//      on client and server side.
+	//      on snder and receiver side.
 	VmsStringMsg::Register();
 	
 	//create and init zmq context

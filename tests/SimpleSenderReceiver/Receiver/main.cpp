@@ -9,6 +9,18 @@
 
 #include <stdio.h>
 
+/*
+  This demo illustrates the use of VMS for a simple sender
+  receiver pair.
+  
+  This receiver is only used for the inter-process part,
+  where messages are transmitted between processes. Start it
+  with a single parameter which designates the socket address
+  on which the receiver will listen for incoming connection
+  requests from the sender. This address has to match the
+  address given as the first parameter to the sender app.
+*/
+
 /**
  * main routine for standalon inter-process receiver
  */
@@ -20,9 +32,9 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	//register message types
+	//register message type(s)
 	//NOTE: make sure that this is done consistently - i.e. in the same order -
-	//      on client and server side.
+	//      on sender and receiver side.
 	VmsStringMsg::Register();
 	
 	//create a context for 1 thread since we are always running standalone
@@ -50,13 +62,17 @@ int main(int argc, char *argv[])
 	//receive messages in endless loop
 	while(!done)
 	{
+		//so here we actually receive a message using our connection
+		//endpoint. It's as simple as this: just pull it out. The
+		//call will block until a message is received.
 		VmsMsg *pIncoming = pReceiver->ReceiveMsg();
 		assert(pIncoming != NULL);
 
-		//print message info
+		//All the rest here is just "eye candy" i.e. we try to interpret
+		//the message.
 		++iNumMsgs;
 		printf("[Receiver] Received message #%d\n", iNumMsgs);
-		//try to convert to string message and output content
+		//Try to convert to string message and output content
 		VmsStringMsg *pStringMsg = dynamic_cast<VmsStringMsg*>(pIncoming);
 		if(pStringMsg != NULL)
 		{

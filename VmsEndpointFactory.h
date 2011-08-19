@@ -56,17 +56,17 @@ class IVmsMsgCodec;
  * protocol is somewhat more complicated and would thus clog the 
  * implementation of the endpoints themselves.
  *
- * @TODO refactor the service REQ-REP socket pair into member variables
+ * \todo Refactor the service REQ-REP socket pair into member variables
  *       in order to reuse them. This also entails a refactoring of the 
  *		 current mode of operation (in-process or inter-process) and
  *		 a corresponding codec creation process.
  *
- * @TODO mixed mode endpoints i.e. those allowing intra- and inter-process
+ * \todo Mixed mode endpoints i.e. those allowing intra- and inter-process
  *		 communication at the same time will entail a major redesign here,
  *	     because then an endpoint would probably need multiple encoders 
  *		 at the same time.
  *
- * @TODO cleanup error/info messages
+ * \todo cleanup error/info messages
  */
 class VMSAPI VmsEndpointFactory
 {
@@ -82,16 +82,22 @@ public:
 	 * itself but also a secure handshake between the new sender
 	 * and its receiving counterpart.
 	 *
-	 * NOTE: Make sure the receiving client is up and running
-	 *       and a corresponding CreateReceiver call has been issued
-	 *       on the other side. Otherwise, this method might block
-	 *       indefinitely!
-	 * @TODO: add time-out here!
+	 * <b>NOTE</b>: Make sure the receiving client is up and running
+	 *				and a corresponding CreateReceiver call has been issued
+	 *				on the other side. Otherwise, this method might block
+	 *				indefinitely!
 	 *
-	 * NOTE: Make sure you call this method from within the thread you
-	 *       will be using with the created sender. Do not share
-	 *		 senders among threads as this might break the underlying 
-	 *		 zmq structures!
+	 * \todo: add time-out here!
+	 *
+	 * <b>NOTE</b>: Make sure you call this method from within the thread you
+	 *				will be using with the created sender. Do not share
+	 *				senders among threads as this might break the underlying 
+	 *				zmq structures!
+	 *
+	 * <b>NOTE</b>: Due to the current implementation the receiver ALWAYS 
+	 *				has to be setup before the sender when using intra-process 
+	 *				communication. Otherwise any connection tries by the 
+	 *				will result in a failed call to CreateSender().
 	 *
 	 * In zmq terms the handshake works as follows:
 	 * First, a PUBLISHER socket is created for the new sender.
@@ -152,14 +158,20 @@ public:
 	 * Create a generic message receiver using the analogues protocol outlined
 	 * for sender creation above.
 	 *
-	 * NOTE: The CreateReceiver call should be issued first, i.e. it is
-	 *		 the receiving end's responsibility to create a listening socket
-	 *		 to which the sending end can connect.
+	 * <b>NOTE</b>: The CreateReceiver call should be issued first, i.e. it is
+	 *				the receiving end's responsibility to create a listening socket
+	 *				to which the sending end can connect.
 	 *
-	 * NOTE: Make sure you call this method from within the thread you
-	 *       will be using with the created receiver. Do not share
-	 *		 receivers among threads as this might break the underlying 
-	 *		 zmq structures!
+	 * <b>NOTE</b>: Make sure you call this method from within the thread you
+	 *				will be using with the created receiver. Do not share
+	 *				receivers among threads as this might break the underlying 
+	 *				zmq structures!
+	 *
+	 * <b>NOTE</b>: Due to the current implementation the receiver ALWAYS 
+	 *				has to be setup before the sender when using intra-process 
+	 *				communication. Otherwise any connection tries by the 
+	 *				will result in a failed call to CreateSender().
+	 *
 	 */
 	VmsMsgReceiver *CreateReceiver(const std::string &strReceiverURL);
 

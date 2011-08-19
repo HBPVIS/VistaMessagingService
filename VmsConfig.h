@@ -25,6 +25,14 @@
 #ifndef _VMSCONFIG_H
 #define _VMSCONFIG_H
 
+/** \mainpage ViSTA Messaging Service (VMS)
+ *
+ * A message oriented middleware for the ViSTA universe.
+ * 
+ * Details on ongoing VMS devleopment can be found here:
+ * https://wiki.sistec.dlr.de/Viracocha/Vms
+ *
+ */
 // Windows DLL build
 #if (defined WIN32) && !(defined VISTAMESSAGINGSERVICE_STATIC) 
 	#ifdef VISTAMESSAGINGSERVICE_EXPORTS
