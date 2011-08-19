@@ -34,6 +34,7 @@
 #include <VistaAspects/VistaSerializer.h>
 #include <VistaAspects/VistaDeSerializer.h>
 
+#include <stdio.h>
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/

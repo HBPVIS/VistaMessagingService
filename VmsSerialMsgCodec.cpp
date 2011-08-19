@@ -37,6 +37,9 @@
 
 #include <VistaInterProcComm/Connections/VistaByteBufferSerializer.h>
 #include <VistaInterProcComm/Connections/VistaByteBufferDeSerializer.h>
+
+#include <stdio.h>
+#include <memory.h>
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
