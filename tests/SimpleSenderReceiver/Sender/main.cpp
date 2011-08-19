@@ -11,14 +11,28 @@
 
 #include <VistaInterProcComm/Concurrency/VistaThreadLoop.h>
 
-//params for local transmission
-// inproc://servicesocket inproc://publishersocket
+/*
+  This demo illustrates the use of VMS for a simple sender
+  receiver pair.
+  It features two basic modes of operations:
+  1) Use it in standalone mode. Data will be transmitted between
+     the main application thread and a special receiver thread.
+	 Params: inproc://servicesocket inproc://publishersocket
+  2) Use it with a dedicated receiver (incorporated in this test
+     case. Data will be sent across process boundaries via a TCP
+	 connection. 
+	 Params: tcp://yourIP:port tcp://yourIP:port+1
+	 e.g. tcp://134.130.70.92:14143 tcp://134.130.70.92:14145
+ 
+ The first parameter in the above mentioned lists gives refers to
+ the socket where the receiver will be listening for incoming 
+ connection requests. The second parameter determines the actual
+ address, where the sender will send out its messages.
+*/
 
-//params for remote transmission
-// tcp://134.130.70.92:14143 tcp://134.130.70.92:14145
-
+  
 /**
- * thread loop for intra process communication
+ * receiver thread for intra process communication
  */
 class ReceiverThread : public VistaThread
 {
@@ -43,16 +57,21 @@ public:
 		int iNumMsgs = 0;
 		bool done = false;
 		//all right, we are good to go
-		//receive messages in endless loop
+		//receive messages  until we get a terminate token
 		while(!done)
 		{
+			//so here we actually receive a message using our connection
+			//endpoint. Its as simple as this: just pull it out. The
+			//call will block until a message is received.
 			VmsMsg *pIncoming = pReceiver->ReceiveMsg();
 			assert(pIncoming != NULL);
 
 			//print message info
 			++iNumMsgs;
 			printf("[Receiver] Received message #%d\n", iNumMsgs);
-			//try to convert to string message and output content
+			//All the rest here is just "eye candy" i.e. we try to interpret
+			//the message.
+			//Try to convert to string message and output content
 			VmsStringMsg *pStringMsg = dynamic_cast<VmsStringMsg*>(pIncoming);
 			if(pStringMsg != NULL)
 			{
@@ -169,7 +188,7 @@ int main(int argc, char *argv[])
 		printf("\tDONE!\n");
 	}
 
-	//create sender endpoint
+	//create sender endpoint using the input parameter as URLs
 	VmsEndpointFactory oFactory = VmsEndpointFactory(&oContext);
 	printf("[Sender] Creating sender endpoint!\n");
 	VmsMsgSender *pSender = oFactory.CreateSender(strServiceURL, strPublisherURL);
