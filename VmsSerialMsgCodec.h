@@ -61,7 +61,7 @@ public:
 	 * message encode: vista msg ==> raw byte buffer
 	 */
 	virtual bool Encode(VmsMsg *pInMsg,
-						ubyte8 *&pBuffer, size_t &iSize) const;
+						VistaType::ubyte8 *&pBuffer, size_t &iSize) const;
 	/**
 	 * In case of inter-process communication as intended by this class, 
 	 * this call will actually delete the input message.
@@ -76,7 +76,7 @@ public:
 	 *		 this as a pOutMsg = new <SomeConcreteMessageType> and therefore
 	 *		 take care of proper disposal of the resulting message.
 	 */
-	virtual bool Decode(ubyte8 *pBuffer, const size_t iSize,
+	virtual bool Decode(VistaType::ubyte8 *pBuffer, const size_t iSize,
 						VmsMsg *&pOutMsg) const;
 };
 

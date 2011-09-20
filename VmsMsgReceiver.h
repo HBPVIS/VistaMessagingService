@@ -96,7 +96,7 @@ public:
 	 * incoming message. It will fail if the number of bytes in the 
 	 * message does not fit.
 	 */
-	bool ReceiveRaw(ubyte8 *pRawData, sint32 iTargetReadSize);
+	bool ReceiveRaw(VistaType::ubyte8 *pRawData, VistaType::sint32 iTargetReadSize);
 protected:
 	
 private:

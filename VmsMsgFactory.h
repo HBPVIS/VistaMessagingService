@@ -75,7 +75,7 @@ public:
 	/**
 	 * 
 	 */
-	static sint32 GetRawMsgTypeId();
+	static VistaType::sint32 GetRawMsgTypeId();
 protected:
 
 private:
@@ -89,7 +89,7 @@ private:
 	 * of 0 is reserved for RAW data content.
 	 */
 	static int m_iTypeIdCounter;
-	static const sint32 m_iRAWMessagetTypeId;
+	static const VistaType::sint32 m_iRAWMessagetTypeId;
 };
 
 #endif // Include guard.

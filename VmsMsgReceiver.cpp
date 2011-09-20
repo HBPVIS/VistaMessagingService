@@ -69,7 +69,7 @@ VmsMsg *VmsMsgReceiver::ReceiveMsg()
 	}
 	//decode the message content
 	VmsMsg *pMsg = NULL;
-	if(!m_pCodec->Decode(static_cast<ubyte8*>(oZMQMsg.data()), oZMQMsg.size(), pMsg))
+	if(!m_pCodec->Decode(static_cast<VistaType::ubyte8*>(oZMQMsg.data()), oZMQMsg.size(), pMsg))
 	{
 		delete pMsg;
 		return NULL;
@@ -80,7 +80,7 @@ VmsMsg *VmsMsgReceiver::ReceiveMsg()
 
 
 
-bool VmsMsgReceiver::ReceiveRaw(ubyte8 *pRawData, sint32 iTargetReadSize)
+bool VmsMsgReceiver::ReceiveRaw(VistaType::ubyte8 *pRawData, VistaType::sint32 iTargetReadSize)
 {
 	zmq::message_t oZMQMsg;
 	try
@@ -92,9 +92,9 @@ bool VmsMsgReceiver::ReceiveRaw(ubyte8 *pRawData, sint32 iTargetReadSize)
 		printf("*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
 		return false;
 	}
-	sint32 iRawId = VmsMsgFactory::GetRawMsgTypeId();
+	VistaType::sint32 iRawId = VmsMsgFactory::GetRawMsgTypeId();
 	size_t iMsgSize = oZMQMsg.size();
-	ubyte8 *pBuffer = static_cast<ubyte8*>(oZMQMsg.data());
+	VistaType::ubyte8 *pBuffer = static_cast<VistaType::ubyte8*>(oZMQMsg.data());
 	//make sure we have correct message length and type flag here!
 	//since we are dealing with raw data here, we are pretty serious about this!
 	assert(iMsgSize == iTargetReadSize+sizeof(iRawId));

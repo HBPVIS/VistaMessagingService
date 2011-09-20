@@ -97,7 +97,7 @@ public:
 	 * deleted and may thus be used for multiple successive calls.
 	 *
 	 */
-	int SendRaw(ubyte8 *pData, sint32 iSize);
+	int SendRaw(VistaType::ubyte8 *pData, VistaType::sint32 iSize);
 
 	/**
 	 * custom free function to be provided with zmq::message_t::rebuild

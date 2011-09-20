@@ -52,7 +52,7 @@ VmsSerialMsgCodec::~VmsSerialMsgCodec()
 
 
 bool VmsSerialMsgCodec::Encode(VmsMsg *pInMsg,
-							   ubyte8 *&pBuffer, size_t &iSize) const 
+							   VistaType::ubyte8 *&pBuffer, size_t &iSize) const 
 {
 	VistaByteBufferSerializer oSerializer;	
 	int iret = pInMsg->Serialize(oSerializer);
@@ -63,10 +63,10 @@ bool VmsSerialMsgCodec::Encode(VmsMsg *pInMsg,
 		printf("*** ERROR *** Failed to serialize message content!\n");
 		return false;
 	}
-	sint32 iType = pInMsg->GetType();
+	VistaType::sint32 iType = pInMsg->GetType();
 	//allocate buffer for sending
 	iSize = static_cast<size_t>(oSerializer.GetBufferSize())+sizeof(iType);
-	pBuffer = new ubyte8[iSize+sizeof(iType)];
+	pBuffer = new VistaType::ubyte8[iSize+sizeof(iType)];
 	//write message type into first 4 bytes for later message creation
 	//on the other side
 	memcpy(pBuffer, &iType, sizeof(iType));
@@ -92,12 +92,12 @@ void VmsSerialMsgCodec::GiveUpOwnership(VmsMsg *pInMsg) const
 }
 
 
-bool VmsSerialMsgCodec::Decode(ubyte8 *pBuffer, const size_t iSize,
+bool VmsSerialMsgCodec::Decode(VistaType::ubyte8 *pBuffer, const size_t iSize,
 							   VmsMsg *&pOutMsg) const 
 {
 	pOutMsg = NULL;
 	//we have written the type id as sint32 -> copy it out as sint32
-	sint32 iTypeId = 0;
+	VistaType::sint32 iTypeId = 0;
 	memcpy(&iTypeId, pBuffer, sizeof(iTypeId));
 
 	//create output message

@@ -37,7 +37,7 @@
 std::map<std::string, VmsMsg*> VmsMsgFactory::m_mapStringToPrototype;
 std::map<int, VmsMsg*> VmsMsgFactory::m_mapIntToPrototype;
 int VmsMsgFactory::m_iTypeIdCounter = 1;
-const sint32 VmsMsgFactory::m_iRAWMessagetTypeId = 0;
+const VistaType::sint32 VmsMsgFactory::m_iRAWMessagetTypeId = 0;
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
@@ -72,7 +72,7 @@ VmsMsg *VmsMsgFactory::CreateInstanceOfType(const int iTypeId)
 	return (itFind->second)->CreateInstance();
 }
 
-sint32 VmsMsgFactory::GetRawMsgTypeId()
+VistaType::sint32 VmsMsgFactory::GetRawMsgTypeId()
 {
 	return m_iRAWMessagetTypeId;
 }
