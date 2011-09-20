@@ -8,6 +8,8 @@ list( APPEND CMAKE_MODULE_PATH "$ENV{VISTA_CMAKE_COMMON}" )
 #make vista specific cmake magic available
 include( VistaCommon )
 
+vista_set_version( VistaMessagingService HEAD HEAD svn_rev )
+
 # right now, the VMS requires the zeromq message oriented middleware
 vista_use_package( ZMQ REQUIRED )
 vista_use_package( VistaCoreLibs REQUIRED VistaBase VistaTools VistaMath VistaAspects VistaInterProcComm FIND_DEPENDENCIES )
