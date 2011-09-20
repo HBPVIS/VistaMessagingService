@@ -96,7 +96,7 @@ bool VmsSerialMsgCodec::Decode(VistaType::ubyte8 *pBuffer, const size_t iSize,
 							   VmsMsg *&pOutMsg) const 
 {
 	pOutMsg = NULL;
-	//we have written the type id as sint32 -> copy it out as sint32
+	//we have written the type id as VistaType::sint32 -> copy it out as VistaType::sint32
 	VistaType::sint32 iTypeId = 0;
 	memcpy(&iTypeId, pBuffer, sizeof(iTypeId));
 
