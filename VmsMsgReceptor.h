@@ -59,7 +59,7 @@ public:
 	
 	/**
 	 * Register a new Handler. The ownership of the handler is passed to the receptor. All handlers will
-	 * be destructed on cleanup. ID starts by 0 
+	 * be destructed on cleanup.
 	 */
 	int RegisterHandler(VmsMsgHandler *pHandler, int id);
 	
@@ -68,7 +68,7 @@ private:
 	//List of all registered handlers
 	std::vector<VmsMsgHandler*> m_oHandlers;
 	//Incomming connection from frontend
-	VmsMsgReceiver* m_pMsgReceiver;
+	VmsMsgReceiver *m_pMsgReceiver;
 };
 
 

@@ -63,14 +63,19 @@ int VmsMsgReceptor::ProcessIncomingMsg()
 {
 
 	VmsMsg * pMsg=m_pMsgReceiver->ReceiveMsg();
-	unsigned int id=pMsg->GetType();
+	int id=pMsg->GetType();
 	
-	if(id>m_oHandlers.size())
+	if (id < 0)
+	{
+		printf("[VmsMsgReceptor::ProcessIncomingMsg] Unknown MsgType: 1");
+		return -1;
+	}
+	if((unsigned int)id > m_oHandlers.size())
 	{
 		printf("[VmsMsgReceptor::ProcessIncomingMsg] MsgType not registered: 1");
 		return -1;
 	}
-	VmsMsgHandler * h = m_oHandlers[id];
+	VmsMsgHandler *h = m_oHandlers[(unsigned int)id];
 	if(!h)
 	{
 		printf("[VmsMsgReceptor::ProcessIncomingMsg] MsgType not registered: 2");
