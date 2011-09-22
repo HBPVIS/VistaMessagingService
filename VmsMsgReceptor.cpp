@@ -38,6 +38,8 @@
 #include "VmsEndpointFactory.h"
 #include <sstream>
 
+#include <cstdio>
+
 using namespace std;
 
 VmsMsgReceptor::VmsMsgReceptor(zmq::context_t *pContext, const std::string strIp, const unsigned int iPort)
