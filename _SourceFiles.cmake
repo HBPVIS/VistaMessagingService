@@ -19,6 +19,10 @@ set( DirFiles
 	VmsMsgReceiver.h
 	VmsMsgSender.cpp
 	VmsMsgSender.h
+	VmsMsgReceptor.h
+	VmsMsgReceptor.cpp
+	VmsMsgHandler.h
+	VmsMsgHandler.cpp
 	VmsSerialMsgCodec.cpp
 	VmsSerialMsgCodec.h
 	VmsStringMsg.cpp
