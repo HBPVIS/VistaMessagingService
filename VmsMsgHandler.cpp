@@ -34,11 +34,16 @@
 #include "VmsMsgHandler.h"
 
 
-VmsMsgHandler::VmsMsgHandler(void)
+VmsMsgHandler::VmsMsgHandler()
 {
 }
 
 
-VmsMsgHandler::~VmsMsgHandler(void)
+VmsMsgHandler::~VmsMsgHandler()
+{
+}
+
+
+VmsMsgHandler::VmsMsgHandler(const VmsMsgHandler&)
 {
 }

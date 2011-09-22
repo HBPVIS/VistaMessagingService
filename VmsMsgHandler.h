@@ -45,14 +45,14 @@
 /* CLASS DEFINITION															  */
 /*============================================================================*/
 
-class VmsMsgHandler
+class VMSAPI VmsMsgHandler
 {
 public:
-	virtual ~VmsMsgHandler(void);
+	virtual ~VmsMsgHandler();
 	virtual int HandleMessage(const VmsMsg *msg) = 0;
 
 protected:
-	VmsMsgHandler(void);
+	VmsMsgHandler();
 	VmsMsgHandler(const VmsMsgHandler& msg);
 };
 

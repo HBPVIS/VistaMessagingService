@@ -1,6 +1,6 @@
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsStringMsg.h				 RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsMsgReceptor.h			 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -22,8 +22,8 @@
 /*============================================================================*/
 // $Id: $
 
-#ifndef VmsMsgReceptor_H
-#define VmsMsgReceptor_H
+#ifndef VMSMSGRECEPTOR_H
+#define VMSMSGRECEPTOR_H
 
 /*============================================================================*/
 /* FORWARD DECLARATIONS														  */

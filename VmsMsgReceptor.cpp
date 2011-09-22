@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsMsgFactory.cpp RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsMsgReceptor.cpp			 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -87,11 +87,11 @@ int VmsMsgReceptor::ProcessIncomingMsg()
 	
 int VmsMsgReceptor::RegisterHandler(VmsMsgHandler *pHandler, int id)
 {
-	int len = m_oHandlers.size();
+	size_t len = m_oHandlers.size();
 	if(id>=len)
 	{
 		m_oHandlers.resize(id+1);
-		for(int i=len;i<id;i++)
+		for(size_t i=len;i<id;i++)
 		{
 			m_oHandlers[i]=NULL;
 		}
