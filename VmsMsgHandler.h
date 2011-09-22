@@ -48,9 +48,12 @@
 class VmsMsgHandler
 {
 public:
-	VmsMsgHandler(void);
 	virtual ~VmsMsgHandler(void);
 	virtual int HandleMessage(const VmsMsg *msg) = 0;
+
+protected:
+	VmsMsgHandler(void);
+	VmsMsgHandler(const VmsMsgHandler& msg);
 };
 
 
