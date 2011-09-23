@@ -42,22 +42,22 @@
 
 using namespace std;
 
-VmsMsgReceptor::VmsMsgReceptor(zmq::context_t *pContext, const std::string strIp, const unsigned int iPort)
+VmsMsgReceptor::VmsMsgReceptor(zmq::context_t *pContext, const std::string &strURL)
 {
 	VmsEndpointFactory oFactory = VmsEndpointFactory(pContext);
-	std::stringstream ss;
-	ss << "tcp://" << strIp << ":" << iPort;
-	m_pMsgReceiver = oFactory.CreateReceiver(ss.str());
+	m_pMsgReceiver = oFactory.CreateReceiver(strURL);
 }
 
 VmsMsgReceptor::~VmsMsgReceptor(void)
 {
 	delete m_pMsgReceiver;
-	for(vector<VmsMsgHandler*>::iterator it=m_oHandlers.begin();it<m_oHandlers.end();it++ )
+	const size_t iSize=m_vecHandlers.size();
+	for(size_t i=0; i<iSize; ++i)
 	{
-		delete *it;
+		delete m_vecHandlers[i];
 	}
 }
+
 
 int VmsMsgReceptor::ProcessIncomingMsg()
 {
@@ -67,35 +67,41 @@ int VmsMsgReceptor::ProcessIncomingMsg()
 	
 	if (id < 0)
 	{
-		printf("[VmsMsgReceptor::ProcessIncomingMsg] Unknown MsgType: 1");
+		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] Unknown MsgType: 1\n");
 		return -1;
 	}
-	if((unsigned int)id > m_oHandlers.size())
+	if((size_t)id >= m_vecHandlers.size())
 	{
-		printf("[VmsMsgReceptor::ProcessIncomingMsg] MsgType not registered: 1");
+		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] MsgType not registered: 1\n");
 		return -1;
 	}
-	VmsMsgHandler *h = m_oHandlers[(unsigned int)id];
-	if(!h)
+	VmsMsgHandler *pHnd = m_vecHandlers[static_cast<size_t>(id)];
+	if(pHnd == NULL)
 	{
-		printf("[VmsMsgReceptor::ProcessIncomingMsg] MsgType not registered: 2");
+		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] MsgType not registered: 2\n");
 		return -1;
 	}
-	h->HandleMessage(pMsg);
+	pHnd->HandleMessage(pMsg);
+
+	//free the message because we won't use it any more
+	delete pMsg;
+
 	return 0;
 }
 	
 int VmsMsgReceptor::RegisterHandler(VmsMsgHandler *pHandler, int id)
 {
-	size_t len = m_oHandlers.size();
-	if(id>=len)
+	size_t len = m_vecHandlers.size();
+	
+	if(id >= len)
 	{
-		m_oHandlers.resize(id+1);
-		for(size_t i=len;i<id;i++)
+		m_vecHandlers.resize(id+1);
+		for(size_t i=len; i<id; ++i)
 		{
-			m_oHandlers[i]=NULL;
+			m_vecHandlers[i]=NULL;
 		}
 	}
-	m_oHandlers[id]=pHandler;
+	m_vecHandlers[id]=pHandler;
+	
 	return 0;
 }

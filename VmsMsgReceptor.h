@@ -46,14 +46,14 @@ class VmsMsgReceiver;
 class VmsMsgReceptor
 {
 public:
-	VmsMsgReceptor(zmq::context_t *pContext, const std::string strIp, const unsigned int strPort);
+	VmsMsgReceptor(zmq::context_t *pContext, const std::string &strReceiverURL);
 
 
-	~VmsMsgReceptor(void);
+	~VmsMsgReceptor();
 	
 	/**
-	 * Receive an incoming Message from frontend and uses the correct Message Handler 
-	 * for processing
+	 * Receive an incoming message on the internal receiver and hand it over to the
+	 * corresponding handler (if any). After handling, delete the message.
 	 */
 	int ProcessIncomingMsg();
 	
@@ -66,7 +66,7 @@ public:
 
 private:
 	//List of all registered handlers
-	std::vector<VmsMsgHandler*> m_oHandlers;
+	std::vector<VmsMsgHandler*> m_vecHandlers;
 	//Incomming connection from frontend
 	VmsMsgReceiver *m_pMsgReceiver;
 };
