@@ -60,7 +60,7 @@ public:
 	 * message encode: vista msg ==> serial raw buffer
 	 */
 	virtual bool Encode(VmsMsg *pInMsg,
-						VistaType::ubyte8 *&pBuffer, size_t &iSize) const;
+						VistaType::byte *&pBuffer, size_t &iSize) const;
 	/**
 	 * 
 	 */
@@ -68,7 +68,7 @@ public:
 	/**
 	 * message decode: serial raw buffer ==> vista msg
 	 */
-	virtual bool Decode(VistaType::ubyte8 *pBuffer, const size_t iSize,
+	virtual bool Decode(VistaType::byte *pBuffer, const size_t iSize,
 						VmsMsg *&pOutMsg) const;
 };
 

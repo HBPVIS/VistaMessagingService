@@ -52,7 +52,7 @@ VmsSerialMsgCodec::~VmsSerialMsgCodec()
 
 
 bool VmsSerialMsgCodec::Encode(VmsMsg *pInMsg,
-							   VistaType::ubyte8 *&pBuffer, size_t &iSize) const 
+							   VistaType::byte *&pBuffer, size_t &iSize) const 
 {
 	VistaByteBufferSerializer oSerializer;	
 	int iret = pInMsg->Serialize(oSerializer);
@@ -66,7 +66,7 @@ bool VmsSerialMsgCodec::Encode(VmsMsg *pInMsg,
 	VistaType::sint32 iType = pInMsg->GetType();
 	//allocate buffer for sending
 	iSize = static_cast<size_t>(oSerializer.GetBufferSize())+sizeof(iType);
-	pBuffer = new VistaType::ubyte8[iSize+sizeof(iType)];
+	pBuffer = new VistaType::byte[iSize+sizeof(iType)];
 	//write message type into first 4 bytes for later message creation
 	//on the other side
 	memcpy(pBuffer, &iType, sizeof(iType));
@@ -92,7 +92,7 @@ void VmsSerialMsgCodec::GiveUpOwnership(VmsMsg *pInMsg) const
 }
 
 
-bool VmsSerialMsgCodec::Decode(VistaType::ubyte8 *pBuffer, const size_t iSize,
+bool VmsSerialMsgCodec::Decode(VistaType::byte *pBuffer, const size_t iSize,
 							   VmsMsg *&pOutMsg) const 
 {
 	pOutMsg = NULL;
@@ -111,10 +111,8 @@ bool VmsSerialMsgCodec::Decode(VistaType::ubyte8 *pBuffer, const size_t iSize,
 	VistaByteBufferDeSerializer oDeser;
 	//NOTE that the first four bytes of the message buffer have been used
 	//for the type id so give the deserializer the offset buffer here!
-	//void *pMsgContent = static_cast<void*>(&(pBuffer[sizeof(iTypeId)])); 
-	char *pMsgContent = reinterpret_cast<char*>(&(pBuffer[sizeof(iTypeId)])); 
 	int iContentSize = static_cast<int>(iSize-sizeof(iTypeId));
-	oDeser.SetBuffer(pMsgContent, iContentSize, false);
+	oDeser.SetBuffer(&(pBuffer[sizeof(iTypeId)]), iContentSize, false);
 	int iret = pOutMsg->DeSerialize(oDeser);
 	if(iret < 0)
 	{

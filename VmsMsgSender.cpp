@@ -55,7 +55,7 @@ VmsMsgSender::~VmsMsgSender()
 int VmsMsgSender::SendMsg(VmsMsg *pMsg)
 {
 	//encode message into suitable byte stream
-	VistaType::ubyte8 *pBuffer = NULL;
+	VistaType::byte *pBuffer = NULL;
 	size_t iSize = 0;
 	m_pCodec->Encode(pMsg, pBuffer, iSize);
 
@@ -77,13 +77,13 @@ int VmsMsgSender::SendMsg(VmsMsg *pMsg)
 	return 1;
 }
 
-int VmsMsgSender::SendRaw(VistaType::ubyte8 *pData, VistaType::sint32 iSize)
+int VmsMsgSender::SendRaw(VistaType::byte *pData, VistaType::sint32 iSize)
 {
 	VistaType::sint32 iRawId = VmsMsgFactory::GetRawMsgTypeId();
 
 	zmq::message_t oZMQMsg(iSize+sizeof(iRawId));
 	//set message type id to signal a RAW message
-	VistaType::ubyte8 *pBuffer = static_cast<VistaType::ubyte8*>(oZMQMsg.data());
+	VistaType::byte *pBuffer = static_cast<VistaType::byte*>(oZMQMsg.data());
 	//copy raw type id to buffer
 	memcpy(&pBuffer, &iRawId, sizeof(iRawId));
 	//copy raw buffer to the message body
@@ -103,7 +103,7 @@ int VmsMsgSender::SendRaw(VistaType::ubyte8 *pData, VistaType::sint32 iSize)
 
 void VmsMsgSender::free_buffer(void *pBuffer, void *hint)
 {
-	VistaType::ubyte8 *pByteBuffer = static_cast<VistaType::ubyte8*>(pBuffer);
+	VistaType::byte *pByteBuffer = static_cast<VistaType::byte*>(pBuffer);
 	delete[] pByteBuffer;
 }
 

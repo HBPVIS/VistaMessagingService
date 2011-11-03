@@ -38,13 +38,13 @@
 /* IMPLEMENTATION															  */
 /*============================================================================*/
 bool VmsInPlaceMsgCodec::Encode(VmsMsg *pInMsg,
-								VistaType::ubyte8 *&pBuffer, 
+								VistaType::byte *&pBuffer, 
 								size_t &iSize) const
 {	
 	//this is an in-place encoder, i.e. we just want to send
 	//the pointer to the message content without further ado...
 	iSize = sizeof(pInMsg);
-	pBuffer = new VistaType::ubyte8[iSize];
+	pBuffer = new VistaType::byte[iSize];
 	//copy the pointer to the message
 	memcpy(pBuffer, &pInMsg, sizeof(pInMsg));
 	return true;
@@ -61,7 +61,7 @@ void VmsInPlaceMsgCodec::GiveUpOwnership(VmsMsg *pInMsg) const
 
 
 
-bool VmsInPlaceMsgCodec::Decode(VistaType::ubyte8 *pBuffer, 
+bool VmsInPlaceMsgCodec::Decode(VistaType::byte *pBuffer, 
 								const size_t iSize,
 								VmsMsg *&pOutMsg) const 
 {

@@ -91,7 +91,7 @@ VmsMsgSender *VmsEndpointFactory::CreateSender(	const std::string &strReceiverUR
 		//send request to open a subscriber socket at target host
 		printf("Trying to connect publisher socket @ <%s>\n\t", strPublisherURL.c_str());
 		VmsStringMsg *pVistaConnectMsg = new VmsStringMsg(strPublisherURL);
-		VistaType::ubyte8 *pBuffer = NULL;
+		VistaType::byte *pBuffer = NULL;
 		size_t iSize = 0;
 		pCodec->Encode(pVistaConnectMsg, pBuffer, iSize);
 		zmq::message_t oZMQConnectMsg(pBuffer, iSize, VmsMsgSender::free_buffer);
@@ -176,7 +176,7 @@ VmsMsgReceiver *VmsEndpointFactory::CreateReceiver(const std::string &strReceive
 		zmq::message_t oMsg;
 		oReplier.recv(&oMsg);
 
-		VistaType::ubyte8 *pBuffer = static_cast<VistaType::ubyte8*>(oMsg.data());
+		VistaType::byte *pBuffer = static_cast<VistaType::byte*>(oMsg.data());
 		size_t iSize = oMsg.size();
 		if(!pCodec->Decode(pBuffer, iSize, pVistaMsg))
 		{

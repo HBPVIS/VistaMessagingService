@@ -58,7 +58,7 @@ public:
 	 * return value indicates success
 	 */
 	virtual bool Encode(VmsMsg *pInMsg,
-						VistaType::ubyte8 *&pBuffer, size_t &iSize) const = 0;
+						VistaType::byte *&pBuffer, size_t &iSize) const = 0;
 
 	/**
 	 * Indicate that the given message is no longer needed
@@ -82,7 +82,7 @@ public:
 	 * 
 	 * return value indicates success
 	 */
-	virtual bool Decode(VistaType::ubyte8 *pBuffer, const size_t iSize,
+	virtual bool Decode(VistaType::byte *pBuffer, const size_t iSize,
 						VmsMsg *&pOutMsg) const = 0;
 protected:
 	IVmsMsgCodec();
