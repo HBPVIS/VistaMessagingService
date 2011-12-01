@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsMsgReceiver.cpp RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsMsgReceiver.cpp		     RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -33,7 +33,6 @@
 #include "VmsMsgReceiver.h"
 
 #include "VmsMsg.h"
-#include "VmsMsgFactory.h"
 #include "VmsMsgCodec.h"
 
 #include <cassert>
@@ -92,14 +91,12 @@ bool VmsMsgReceiver::ReceiveRaw(VistaType::byte *pRawData, VistaType::sint32 iTa
 		printf("*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
 		return false;
 	}
-	VistaType::sint32 iRawId = VmsMsgFactory::GetRawMsgTypeId();
 	size_t iMsgSize = oZMQMsg.size();
 	VistaType::byte *pBuffer = static_cast<VistaType::byte*>(oZMQMsg.data());
-	//make sure we have correct message length and type flag here!
-	//since we are dealing with raw data here, we are pretty serious about this!
-	assert(iMsgSize == iTargetReadSize+sizeof(iRawId));
+	//make sure we have correct message length!
+	assert(iMsgSize == iTargetReadSize);
 	//copy message data to output buffer
-	memcpy(pRawData, &(pBuffer[sizeof(iRawId)]), iTargetReadSize);
+	memcpy(pRawData, pBuffer, iTargetReadSize);
 	return true;
 }
 /*============================================================================*/

@@ -13,8 +13,6 @@ set( DirFiles
 	VmsMsg.h
 	VmsMsgCodec.cpp
 	VmsMsgCodec.h
-	VmsMsgFactory.cpp
-	VmsMsgFactory.h
 	VmsMsgReceiver.cpp
 	VmsMsgReceiver.h
 	VmsMsgSender.cpp

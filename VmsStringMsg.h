@@ -50,22 +50,9 @@
 class VMSAPI VmsStringMsg : public VmsMsg
 {
 public:
+	VmsStringMsg();
 	VmsStringMsg(const std::string &strMsg);
 	virtual ~VmsStringMsg();
-
-	/**
-	 * factory method
-	 */
-	virtual VmsMsg *CreateInstance() const;
-
-	virtual int GetType() const;
-
-	/**
-	 * Explicit static registration interface in order to register
-	 * this type with the message factory and get a unique type 
-	 * identifier.
-	 */
-	static void Register();
 
 	/**
 	 * type conversion to string
@@ -92,13 +79,11 @@ public:
 	virtual std::string GetSignature() const;
 
 protected:
-	//hide default c'tors
-	VmsStringMsg();
+	//hide default copy c'tor
 	VmsStringMsg(const VmsStringMsg& other);
 
 private:
 	std::string m_strMsg;
-	static int m_iVistaStringMsgTypeId;
 };
 
 

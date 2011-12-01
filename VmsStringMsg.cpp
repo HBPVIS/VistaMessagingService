@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsStringMsg.cpp RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsStringMsg.cpp			 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -31,13 +31,10 @@
 /* INCLUDES																	  */
 /*============================================================================*/
 #include "VmsStringMsg.h"
-#include "VmsMsgFactory.h"
 
 #include <VistaAspects/VistaSerializer.h>
 #include <VistaAspects/VistaDeSerializer.h>
 
-//init type id to -1 in order to signal "uninitialized"
-int VmsStringMsg::m_iVistaStringMsgTypeId = -1;
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
@@ -60,26 +57,6 @@ VmsStringMsg::~VmsStringMsg()
 }
 
 
-VmsMsg *VmsStringMsg::CreateInstance() const
-{
-	return new VmsStringMsg("");
-}
-
-int VmsStringMsg::GetType() const
-{
-	return m_iVistaStringMsgTypeId;
-}
-
-
-void VmsStringMsg::Register()
-{
-	if(m_iVistaStringMsgTypeId == -1)
-	{
-		//register once and for all...
-		m_iVistaStringMsgTypeId = 
-			VmsMsgFactory::RegisterPrototype(new VmsStringMsg(""));
-	}
-}
 
 VmsStringMsg::operator std::string()
 {

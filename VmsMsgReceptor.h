@@ -30,44 +30,54 @@
 /*============================================================================*/
 class VmsMsgHandler;
 class VmsMsgReceiver;
+class VmsMsg;
 
 /*============================================================================*/
 /* INCLUDES																	  */
 /*============================================================================*/
 #include "VmsConfig.h"
-#include <VistaBase/VistaBaseTypes.h>
+
 #include <string>
 #include <vector>
+
 #include <zmq.hpp>
+
+#include <VistaBase/VistaBaseTypes.h>
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-
+/**
+ * 
+ */
 class VmsMsgReceptor
 {
 public:
 	VmsMsgReceptor(zmq::context_t *pContext, const std::string &strReceiverURL);
 
 
-	~VmsMsgReceptor();
+	virtual ~VmsMsgReceptor();
 	
 	/**
-	 * Receive an incoming message on the internal receiver and hand it over to the
-	 * corresponding handler (if any). After handling, delete the message.
+	* Register a new handler for the given message type. 
+	* The ownership of the handler is passed to the receptor. All handlers will 
+	* be destructed on cleanup.
+	* \return slot id if successful, -1 in case of error
+	*/
+	int RegisterHandler(VmsMsg *pMsgType, VmsMsgHandler *pHandler);
+	
+	/**
+	 * Receive an incoming message on the internal receiver and hand it over 
+	 * to the corresponding handler (if any). After handling, delete the 
+	 * message.
+	 * \return return code of HandleMsg if a message is passed to the handler,
+	 *         -1 in case of error.
 	 */
 	int ProcessIncomingMsg();
-	
-	/**
-	 * Register a new Handler. The ownership of the handler is passed to the receptor. All handlers will
-	 * be destructed on cleanup.
-	 */
-	int RegisterHandler(VmsMsgHandler *pHandler, int id);
-	
 
 private:
-	//List of all registered handlers
+	/** List of all registered handlers */
 	std::vector<VmsMsgHandler*> m_vecHandlers;
-	//Incomming connection from frontend
+	/** receiver for incoming messages */
 	VmsMsgReceiver *m_pMsgReceiver;
 };
 

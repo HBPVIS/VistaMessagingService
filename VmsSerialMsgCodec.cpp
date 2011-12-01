@@ -35,6 +35,8 @@
 #include "VmsMsg.h"
 #include "VmsMsgFactory.h"
 
+#include <VistaAspects/VistaMarshalledObjectFactory.h>
+
 #include <VistaInterProcComm/Connections/VistaByteBufferSerializer.h>
 #include <VistaInterProcComm/Connections/VistaByteBufferDeSerializer.h>
 
@@ -54,23 +56,22 @@ VmsSerialMsgCodec::~VmsSerialMsgCodec()
 bool VmsSerialMsgCodec::Encode(VmsMsg *pInMsg,
 							   VistaType::byte *&pBuffer, size_t &iSize) const 
 {
-	VistaByteBufferSerializer oSerializer;	
-	int iret = pInMsg->Serialize(oSerializer);
+	//use the ViSTA MarshalledObjectFactory to encode not only the
+	//object's state but also its type information.
+	VistaByteBufferSerializer oSerializer;
 
-	//error checking
+	VistaMarshalledObjectFactory *pFactory = VistaMarshalledObjectFactory::GetSingleton();
+	int iret = pFactory->MarshallObject(*pInMsg, oSerializer);
+
 	if(iret<0)
 	{
-		printf("*** ERROR *** Failed to serialize message content!\n");
+		printf("*** ERROR *** Failed to marshall message!\n");
 		return false;
 	}
-	VistaType::sint32 iType = pInMsg->GetType();
 	//allocate buffer for sending
-	iSize = static_cast<size_t>(oSerializer.GetBufferSize())+sizeof(iType);
-	pBuffer = new VistaType::byte[iSize+sizeof(iType)];
-	//write message type into first 4 bytes for later message creation
-	//on the other side
-	memcpy(pBuffer, &iType, sizeof(iType));
-	//finally copy message content from serializer
+	iSize = static_cast<size_t>(oSerializer.GetBufferSize());
+	pBuffer = new VistaType::byte[iSize];
+	//copy marshalled message buffer to target buffer
 	//
 	//NOTE: For safety reasons, we do a copy here. Strictly speaking, 
 	//we could get around this copy if we just thought hard enough.
@@ -78,7 +79,7 @@ bool VmsSerialMsgCodec::Encode(VmsMsg *pInMsg,
 	//serializer will kill its buffer upon deletion and on the other 
 	//hand setting an own buffer to get around this will jeopardize 
 	//the serializer's internal memory management.
-	memcpy(&(pBuffer[sizeof(iType)]), oSerializer.GetBuffer(), iSize);
+	memcpy(pBuffer, oSerializer.GetBuffer(), iSize);
 	return true;
 }
 
@@ -95,30 +96,16 @@ void VmsSerialMsgCodec::GiveUpOwnership(VmsMsg *pInMsg) const
 bool VmsSerialMsgCodec::Decode(VistaType::byte *pBuffer, const size_t iSize,
 							   VmsMsg *&pOutMsg) const 
 {
-	pOutMsg = NULL;
-	//we have written the type id as VistaType::sint32 -> copy it out as VistaType::sint32
-	VistaType::sint32 iTypeId = 0;
-	memcpy(&iTypeId, pBuffer, sizeof(iTypeId));
+	//create deserializer and provide it the source buffer
+	VistaByteBufferDeSerializer oDeser;
+	oDeser.SetBuffer(pBuffer, static_cast<int>(iSize), false);
+	//use ViSTA marshaling to decode type and state information
+	VistaMarshalledObjectFactory *pFactory = VistaMarshalledObjectFactory::GetSingleton();
+	pOutMsg = dynamic_cast<VmsMsg*>(pFactory->UnmarshallObject(oDeser));
 
-	//create output message
-	pOutMsg = VmsMsgFactory::CreateInstanceOfType(iTypeId);
 	if(pOutMsg == NULL)
 	{
-		printf("*** ERROR *** Unknown message type!\n");
-		return false;
-	}
-	//finally, deserialize the message
-	VistaByteBufferDeSerializer oDeser;
-	//NOTE that the first four bytes of the message buffer have been used
-	//for the type id so give the deserializer the offset buffer here!
-	int iContentSize = static_cast<int>(iSize-sizeof(iTypeId));
-	oDeser.SetBuffer(&(pBuffer[sizeof(iTypeId)]), iContentSize, false);
-	int iret = pOutMsg->DeSerialize(oDeser);
-	if(iret < 0)
-	{
-		printf("*** ERROR *** Deserializing message failed!\n");
-		delete pOutMsg;
-		pOutMsg = NULL;
+		printf("*** ERROR *** Unmarshalling of message failed!\n");
 		return false;
 	}
 	return true;

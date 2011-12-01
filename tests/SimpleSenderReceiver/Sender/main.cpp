@@ -9,6 +9,7 @@
 #include <VmsEndpointFactory.h>
 
 #include <VistaBase/VistaTimeUtils.h>
+#include <VistaAspects/VistaMarshalledObjectFactory.h>
 #include <VistaInterProcComm/Concurrency/VistaThreadLoop.h>
 
 #include <stdio.h>
@@ -24,7 +25,7 @@
      case. Data will be sent across process boundaries via a TCP
 	 connection. 
 	 Params: tcp://yourIP:port tcp://yourIP:port+1
-	 e.g. tcp://134.130.70.92:14143 tcp://134.130.70.92:14145
+	 e.g. tcp://134.130.70.92:14143 tcp://134.130.70.92:14144
  
  The first parameter in the above mentioned lists gives refers to
  the socket where the receiver will be listening for incoming 
@@ -171,10 +172,13 @@ int main(int argc, char *argv[])
 
 	
 	//register message types
-	//NOTE: make sure that this is done consistently - i.e. in the same order -
-	//      on snder and receiver side.
-	VmsStringMsg::Register();
-	
+	//This uses the VistaMarshalledObjectFactory for a general approach to marshall the 
+	//messages. This approach works with ALL serializables, however, the registration
+	//gets a little cumbersome. 
+	VmsStringMsg oMsg;
+	VistaMarshalledObjectFactory *pFac = VistaMarshalledObjectFactory::GetSingleton();
+	pFac->RegisterType(&oMsg, new VistaVanillaCreator<IVistaSerializable,VmsStringMsg>());
+
 	//create and init zmq context
 	zmq::context_t oContext(2);
 	

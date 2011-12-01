@@ -7,6 +7,8 @@
 #include <VmsMsgReceiver.h>
 #include <VmsEndpointFactory.h>
 
+#include <VistaAspects/VistaMarshalledObjectFactory.h>
+
 #include <stdio.h>
 
 /*
@@ -22,7 +24,7 @@
 */
 
 /**
- * main routine for standalon inter-process receiver
+ * main routine for standalone inter-process receiver
  */
 int main(int argc, char *argv[])
 {
@@ -32,11 +34,14 @@ int main(int argc, char *argv[])
 		return -1;
 	}
 
-	//register message type(s)
-	//NOTE: make sure that this is done consistently - i.e. in the same order -
-	//      on sender and receiver side.
-	VmsStringMsg::Register();
-	
+	//register message types
+	//This uses the VistaMarshalledObjectFactory for a general approach to marshall the 
+	//messages. This approach works with ALL serializables, however, the registration
+	//gets a little cumbersome. 
+	VmsStringMsg oMsg;
+	VistaMarshalledObjectFactory *pFac = VistaMarshalledObjectFactory::GetSingleton();
+	pFac->RegisterType(&oMsg, new VistaVanillaCreator<IVistaSerializable,VmsStringMsg>());
+
 	//create a context for 1 thread since we are always running standalone
 	//with no other threads attached
 	zmq::context_t oContext(2);

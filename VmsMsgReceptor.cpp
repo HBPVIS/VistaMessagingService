@@ -32,11 +32,12 @@
 /*============================================================================*/
 
 #include "VmsMsgReceptor.h"
+
 #include "VmsMsgReceiver.h"
 #include "VmsMsgHandler.h"
 #include "VmsEndpointFactory.h"
-#include "VmsEndpointFactory.h"
-#include <sstream>
+
+#include <VistaAspects/VistaMarshalledObjectFactory.h>
 
 #include <cstdio>
 
@@ -58,50 +59,64 @@ VmsMsgReceptor::~VmsMsgReceptor(void)
 	}
 }
 
+int VmsMsgReceptor::RegisterHandler(VmsMsg *pMsgType, VmsMsgHandler *pHandler)
+{
+	VistaMarshalledObjectFactory *pFactory = VistaMarshalledObjectFactory::GetSingleton();
+	
+	//determine global id
+	int id=pFactory->GetGlobalTypeId(*pMsgType);
+	if(id < 0)
+	{
+		printf("*** ERROR *** [VmsMsgReceptor::RegisterHandler] Msg type not registered with factory!");
+		return -1;
+	}
+	
+	//resize handler vector if necessary
+	size_t iTgtSlot = static_cast<size_t>(id);
+	size_t len = m_vecHandlers.size();
+	if(static_cast<size_t>(id) >= len)
+	{
+		m_vecHandlers.resize(id+1);
+		for(size_t i=len; i<iTgtSlot; ++i)
+		{
+			m_vecHandlers[i]=NULL;
+		}
+	}
+	
+	//assign handler
+	m_vecHandlers[iTgtSlot]=pHandler;
+
+	return static_cast<int>(iTgtSlot);
+}
 
 int VmsMsgReceptor::ProcessIncomingMsg()
 {
-
+	//receive the message 
 	VmsMsg * pMsg=m_pMsgReceiver->ReceiveMsg();
-	int id=pMsg->GetType();
 	
-	if (id < 0)
+	//retrieve globally unique type id
+	VistaMarshalledObjectFactory *pFactory = VistaMarshalledObjectFactory::GetSingleton();
+	VistaType::sint32 id = pFactory->GetGlobalTypeId(*pMsg);
+	
+	//error checking
+	if(id < 0 || static_cast<size_t>(id) >= m_vecHandlers.size())
 	{
-		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] Unknown MsgType: 1\n");
-		return -1;
-	}
-	if((size_t)id >= m_vecHandlers.size())
-	{
-		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] MsgType not registered: 1\n");
+		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] Invalid message type!\n");
 		return -1;
 	}
 	VmsMsgHandler *pHnd = m_vecHandlers[static_cast<size_t>(id)];
 	if(pHnd == NULL)
 	{
-		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] MsgType not registered: 2\n");
+		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] No handler for message type id <%d>!\n", id);
 		return -1;
 	}
-	pHnd->HandleMessage(pMsg);
+	
+	//Pass messag to the given handler for that message type
+	int iret = pHnd->HandleMessage(pMsg);
 
 	//free the message because we won't use it any more
 	delete pMsg;
 
-	return 0;
+	return iret;
 }
-	
-int VmsMsgReceptor::RegisterHandler(VmsMsgHandler *pHandler, int id)
-{
-	size_t len = m_vecHandlers.size();
-	
-	if(id >= len)
-	{
-		m_vecHandlers.resize(id+1);
-		for(size_t i=len; i<id; ++i)
-		{
-			m_vecHandlers[i]=NULL;
-		}
-	}
-	m_vecHandlers[id]=pHandler;
-	
-	return 0;
-}
+

@@ -13,7 +13,6 @@ vista_use_package( ZMQ REQUIRED )
 vista_use_package( VistaCoreLibs REQUIRED VistaBase VistaTools VistaMath VistaAspects VistaInterProcComm FIND_DEPENDENCIES )
 vista_use_package( VistaMessagingService REQUIRED )
 vista_use_package( GTest REQUIRED )
-vista_use_package( Threads REQUIRED )
 
 # Including the source files of all source subfolders recursively
 include( "./_SourceFiles.cmake" )

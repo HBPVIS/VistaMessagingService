@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsMsgSender.cpp RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsMsgSender.cpp			 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -33,7 +33,6 @@
 #include "VmsMsgSender.h"
 
 #include "VmsMsg.h"
-#include "VmsMsgFactory.h"
 #include "VmsMsgCodec.h"
 
 #include <stdio.h>
@@ -79,16 +78,14 @@ int VmsMsgSender::SendMsg(VmsMsg *pMsg)
 
 int VmsMsgSender::SendRaw(VistaType::byte *pData, VistaType::sint32 iSize)
 {
-	VistaType::sint32 iRawId = VmsMsgFactory::GetRawMsgTypeId();
-
-	zmq::message_t oZMQMsg(iSize+sizeof(iRawId));
-	//set message type id to signal a RAW message
+	//allocate message space
+	zmq::message_t oZMQMsg(iSize);
 	VistaType::byte *pBuffer = static_cast<VistaType::byte*>(oZMQMsg.data());
-	//copy raw type id to buffer
-	memcpy(&pBuffer, &iRawId, sizeof(iRawId));
+	
 	//copy raw buffer to the message body
-	memcpy(&(pBuffer[sizeof(iRawId)]), pData, iSize);
+	memcpy(pBuffer, pData, iSize);
 
+	//send it 
 	try
 	{
 		m_pPublisher->send(oZMQMsg);
@@ -98,6 +95,7 @@ int VmsMsgSender::SendRaw(VistaType::byte *pData, VistaType::sint32 iSize)
 		printf("*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
 		return 0;
 	}
+
 	return 1;
 }
 

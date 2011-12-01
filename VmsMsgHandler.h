@@ -27,8 +27,8 @@
 /*============================================================================*/
 // $Id: $
 
-#ifndef VmsMsgHandler_H
-#define VmsMsgHandler_H
+#ifndef VMSMSGHANDLER_H
+#define VMSMSGHANDLER_H
 
 /*============================================================================*/
 /* FORWARD DECLARATIONS														  */

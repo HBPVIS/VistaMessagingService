@@ -56,16 +56,6 @@ public:
 	virtual ~VmsMsg();
 
 	/**
-	 * factory method
-	 */
-	virtual VmsMsg *CreateInstance() const = 0;
-
-	/**
-	 * type registration and creation interface
-	 */
-	virtual int GetType() const = 0;
-	
-	/**
 	 * Ticketing access for labeling successive messages
 	 */
 	int GetTicket() const;

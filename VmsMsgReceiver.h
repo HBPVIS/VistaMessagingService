@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsMsgReceiver.h RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsMsgReceiver.h			 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -40,7 +40,9 @@ class VmsMsg;
 /* INCLUDES																	  */
 /*============================================================================*/
 #include "VmsConfig.h"
+
 #include <zmq.hpp>
+
 #include <VistaBase/VistaBaseTypes.h>
 
 /*============================================================================*/
