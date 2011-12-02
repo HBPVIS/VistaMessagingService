@@ -40,6 +40,7 @@
 #include <VistaAspects/VistaMarshalledObjectFactory.h>
 
 #include <cstdio>
+#include <cassert>
 
 using namespace std;
 
@@ -47,6 +48,9 @@ VmsMsgReceptor::VmsMsgReceptor(zmq::context_t *pContext, const std::string &strU
 {
 	VmsEndpointFactory oFactory = VmsEndpointFactory(pContext);
 	m_pMsgReceiver = oFactory.CreateReceiver(strURL);
+	
+	//just make sure we get an appropriate handler here!
+	assert(m_pMsgReceiver != NULL);
 }
 
 VmsMsgReceptor::~VmsMsgReceptor(void)

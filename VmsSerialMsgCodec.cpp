@@ -33,7 +33,6 @@
 #include "VmsSerialMsgCodec.h"
 
 #include "VmsMsg.h"
-#include "VmsMsgFactory.h"
 
 #include <VistaAspects/VistaMarshalledObjectFactory.h>
 
