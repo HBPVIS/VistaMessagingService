@@ -49,7 +49,7 @@ class VmsMsg;
 /**
  * 
  */
-class VmsMsgReceptor
+class VMSAPI VmsMsgReceptor
 {
 public:
 	VmsMsgReceptor(zmq::context_t *pContext, const std::string &strReceiverURL);

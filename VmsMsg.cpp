@@ -73,15 +73,7 @@ int VmsMsg::Serialize(IVistaSerializer &oSer) const
 {
 	int iSize = 0;
 	int iret = 0;
-	/*
-	//first of all -> write type id for direct later retrieval
-	iret = oSer.WriteInt32(this->GetType());
-	if(iret < 0)
-	return -1;
-	else
-	iSize += iret;
-	*/
-
+	
 	//write length encoded signature string 
 	//for later type identification on receiver side
 	std::string strSig = this->GetSignature();
@@ -115,21 +107,6 @@ int VmsMsg::DeSerialize(IVistaDeSerializer &oDeser)
 	int iSize = 0;
 	int iret = 0;
 
-	//read type identifier
-	/*
-	int iType = -1;
-	iret = oDeser.ReadInt32(iType);
-	if(iret < 0)
-	return -1;
-	else
-	iSize += iret;
-	//check type
-	if(iType != this->GetType())
-	{
-	printf("*** ERROR *** Deserialization type id mismatch!\n");
-	return -1;
-	}
-	*/
 	//read signature
 	int iLen = 0;
 	iret = oDeser.ReadInt32(iLen);
