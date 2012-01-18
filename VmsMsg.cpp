@@ -71,20 +71,7 @@ void VmsMsg::SetTicket(const int iTicket)
 
 int VmsMsg::Serialize(IVistaSerializer &oSer) const
 {
-	 //... do local serialization
-    return this->SerializeMsgContent(oSer);
-}
-
-
-
-int VmsMsg::DeSerialize(IVistaDeSerializer &oDeser)
-{
-	 //... do local serialization
-    return this->DeSerializeMsgContent(oDeser);
-}
-
-int VmsMsg::SerializeMsgContent(IVistaSerializer &oSer) const
-{
+		 //... do local serialization
 	int iSize = 0;
 	int iret = 0;
 	
@@ -110,11 +97,19 @@ int VmsMsg::SerializeMsgContent(IVistaSerializer &oSer) const
 		return -1;
 	else
 		iSize += iret;
+	 //... do local serialization
+    iret = this->SerializeMsgContent(oSer);
+	if(iret < 0)
+		return -1;
+	else
+		iSize += iret;
 
 	return iSize;
 }
-    
-int VmsMsg::DeSerializeMsgContent(IVistaDeSerializer &oDeser)
+
+
+
+int VmsMsg::DeSerialize(IVistaDeSerializer &oDeser)
 {
 	int iSize = 0;
 	int iret = 0;
@@ -145,6 +140,12 @@ int VmsMsg::DeSerializeMsgContent(IVistaDeSerializer &oDeser)
 	}
 
 	iret = oDeser.ReadInt32(m_iTicket);
+	if(iret < 0)
+		return -1;
+	else
+		iSize += iret;
+
+    iret = this->DeSerializeMsgContent(oDeser);
 	if(iret < 0)
 		return -1;
 	else
