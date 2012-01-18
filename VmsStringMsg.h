@@ -63,20 +63,14 @@ public:
 
 	void SetString(const std::string &str);
 	
-	/**
-	 * serialization
-	 */
-	virtual int Serialize(IVistaSerializer &oSer) const;
-
-	/**
-	 *  deserialization
-	 */
-	virtual int DeSerialize(IVistaDeSerializer &oDeser);
-
-	/**
-	 * 
-	 */
+	///**
+	// * 
+	// */
 	virtual std::string GetSignature() const;
+
+	virtual int SerializeMsgContent(IVistaSerializer &oSer) const;
+    
+	virtual int DeSerializeMsgContent(IVistaDeSerializer &oDeser);
 
 protected:
 	//hide default copy c'tor

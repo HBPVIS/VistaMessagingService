@@ -64,9 +64,13 @@ public:
 	/**
 	 * basic serialization strategy here
 	 */
-	virtual int Serialize(IVistaSerializer &oSer) const;
+	int Serialize(IVistaSerializer &oSer) const;
 
-	virtual int DeSerialize(IVistaDeSerializer &oDeser);
+	int DeSerialize(IVistaDeSerializer &oDeser);
+
+	virtual int SerializeMsgContent(IVistaSerializer &oSer) const = 0;
+    
+	virtual int DeSerializeMsgContent(IVistaDeSerializer &oDeser) = 0;
 
 
 protected:

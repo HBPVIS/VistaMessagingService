@@ -73,8 +73,12 @@ void VmsStringMsg::SetString(const std::string &str)
 	m_strMsg = str;
 }
 
+std::string VmsStringMsg::GetSignature() const
+{
+	return "VistaStringMsg";
+}
 
-int VmsStringMsg::Serialize(IVistaSerializer &oSer) const
+int VmsStringMsg::SerializeMsgContent(IVistaSerializer &oSer) const
 {
 	int iSize = 0;
 	//serialize header
@@ -100,8 +104,8 @@ int VmsStringMsg::Serialize(IVistaSerializer &oSer) const
 
 	return iSize;
 }
-
-int VmsStringMsg::DeSerialize(IVistaDeSerializer &oDeser)
+    
+int VmsStringMsg::DeSerializeMsgContent(IVistaDeSerializer &oDeser)
 {
 	int iSize = 0;
 	int iret = VmsMsg::DeSerialize(oDeser);
@@ -130,12 +134,6 @@ int VmsStringMsg::DeSerialize(IVistaDeSerializer &oDeser)
 
 	return iSize;
 }
-
-std::string VmsStringMsg::GetSignature() const
-{
-	return "VistaStringMsg";
-}
-
 
 
 

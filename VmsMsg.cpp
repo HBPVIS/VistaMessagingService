@@ -71,6 +71,20 @@ void VmsMsg::SetTicket(const int iTicket)
 
 int VmsMsg::Serialize(IVistaSerializer &oSer) const
 {
+	 //... do local serialization
+    return this->SerializeMsgContent(oSer);
+}
+
+
+
+int VmsMsg::DeSerialize(IVistaDeSerializer &oDeser)
+{
+	 //... do local serialization
+    return this->DeSerializeMsgContent(oDeser);
+}
+
+int VmsMsg::SerializeMsgContent(IVistaSerializer &oSer) const
+{
 	int iSize = 0;
 	int iret = 0;
 	
@@ -99,10 +113,8 @@ int VmsMsg::Serialize(IVistaSerializer &oSer) const
 
 	return iSize;
 }
-
-
-
-int VmsMsg::DeSerialize(IVistaDeSerializer &oDeser)
+    
+int VmsMsg::DeSerializeMsgContent(IVistaDeSerializer &oDeser)
 {
 	int iSize = 0;
 	int iret = 0;
@@ -140,7 +152,6 @@ int VmsMsg::DeSerialize(IVistaDeSerializer &oDeser)
 
 	return iSize;
 }
-
 
 /*============================================================================*/
 /* END OF FILE																  */
