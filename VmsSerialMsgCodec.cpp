@@ -64,7 +64,7 @@ bool VmsSerialMsgCodec::Encode(VmsMsg *pInMsg,
 
 	if(iret<0)
 	{
-		printf("*** ERROR *** Failed to marshall message!\n");
+		fprintf(stderr, "*** ERROR *** Failed to marshall message!\n");
 		return false;
 	}
 	//allocate buffer for sending
@@ -104,7 +104,7 @@ bool VmsSerialMsgCodec::Decode(VistaType::byte *pBuffer, const size_t iSize,
 
 	if(pOutMsg == NULL)
 	{
-		printf("*** ERROR *** Unmarshalling of message failed!\n");
+		fprintf(stderr, "*** ERROR *** Unmarshalling of message failed!\n");
 		return false;
 	}
 	return true;

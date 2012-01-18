@@ -140,7 +140,7 @@ int VmsMsg::DeSerializeMsgContent(IVistaDeSerializer &oDeser)
 	//check out signature for correct type!
 	if(strSig != this->GetSignature())
 	{
-		printf("*** ERROR *** Deserialization signature mismatch!\n");
+		fprintf(stderr, "*** ERROR *** Deserialization signature mismatch!\n");
 		return -1;
 	}
 

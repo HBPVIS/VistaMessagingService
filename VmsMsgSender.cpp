@@ -70,7 +70,7 @@ int VmsMsgSender::SendMsg(VmsMsg *pMsg)
 	}
 	catch(zmq::error_t &oError)
 	{
-		printf("*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
+		fprintf(stderr, "*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
 		return 0;
 	}
 	return 1;
@@ -92,7 +92,7 @@ int VmsMsgSender::SendRaw(VistaType::byte *pData, VistaType::sint32 iSize)
 	}
 	catch(zmq::error_t &oError)
 	{
-		printf("*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
+		fprintf(stderr, "*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
 		return 0;
 	}
 

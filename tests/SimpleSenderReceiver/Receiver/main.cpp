@@ -52,7 +52,7 @@ int main(int argc, char *argv[])
 	if(strServiceURL.find("tcp",0,3)!=0)
 	{
 		//we have no tcp socket -> bail out
-		printf("*** ERROR *** Receiver works only for tcp communication right now!\n");
+		fprintf(stderr, "*** ERROR *** Receiver works only for tcp communication right now!\n");
 		return -1;
 	}
 
@@ -76,7 +76,9 @@ int main(int argc, char *argv[])
 		//All the rest here is just "eye candy" i.e. we try to interpret
 		//the message.
 		++iNumMsgs;
+#ifdef DEBUG
 		printf("[Receiver] Received message #%d\n", iNumMsgs);
+#endif
 		//Try to convert to string message and output content
 		VmsStringMsg *pStringMsg = dynamic_cast<VmsStringMsg*>(pIncoming);
 		if(pStringMsg != NULL)
@@ -85,19 +87,27 @@ int main(int argc, char *argv[])
 			done = (strContent == "final");
 			if(!done)
 			{
+#ifdef DEBUG
 				printf("[Receiver] Got string message!\n");
 				printf("\tcontent = %s\n", strContent.c_str());
+#endif
 			}
 			else
 			{
+#ifdef DEBUG
 				printf("[Receiver] Got terminate token!\n");
+#endif
 			}
 		}
 		else
 		{
+#ifdef DEBUG
 			printf("[Receiver] Got some other generic message!\n");
+#endif
 		}
+#ifdef DEBUG
 		printf("\n\n");
+#endif
 		//remember to clear the message!
 		delete pIncoming;
 	}

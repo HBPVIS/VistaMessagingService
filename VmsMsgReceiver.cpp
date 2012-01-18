@@ -63,7 +63,7 @@ VmsMsg *VmsMsgReceiver::ReceiveMsg()
 	}
 	catch(zmq::error_t &oError)
 	{
-		printf("*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
+		fprintf(stderr, "*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
 		return NULL;
 	}
 	//decode the message content
@@ -88,7 +88,7 @@ bool VmsMsgReceiver::ReceiveRaw(VistaType::byte *pRawData, VistaType::sint32 iTa
 	}
 	catch(zmq::error_t &oError)
 	{
-		printf("*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
+		fprintf(stderr, "*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
 		return false;
 	}
 	size_t iMsgSize = oZMQMsg.size();

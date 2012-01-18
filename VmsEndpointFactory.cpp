@@ -89,7 +89,9 @@ VmsMsgSender *VmsEndpointFactory::CreateSender(	const std::string &strReceiverUR
 		oPollSock.events = ZMQ_POLLIN;
 
 		//send request to open a subscriber socket at target host
+#ifdef DEBUG
 		printf("Trying to connect publisher socket @ <%s>\n\t", strPublisherURL.c_str());
+#endif
 		VmsStringMsg *pVistaConnectMsg = new VmsStringMsg(strPublisherURL);
 		VistaType::byte *pBuffer = NULL;
 		size_t iSize = 0;
@@ -110,7 +112,9 @@ VmsMsgSender *VmsEndpointFactory::CreateSender(	const std::string &strReceiverUR
 			//not use a zmq message multiple times!
 			zmq::message_t dummy;
 			pPublisher->send(dummy);
+#ifdef DEBUG
 			printf(".");
+#endif
 		}
 
 		//breaking the loop means that we most likely have
@@ -120,11 +124,13 @@ VmsMsgSender *VmsEndpointFactory::CreateSender(	const std::string &strReceiverUR
 		{
 			zmq::message_t oAck;
 			oReqSocket.recv(&oAck);
+#ifdef DEBUG
 			printf("\nDONE!\n\n");
+#endif
 		}
 		else
 		{
-			printf("\nFAILED!\n*** ERROR *** Polling for incoming ack failed\n");
+			fprintf(stderr, "\nFAILED!\n*** ERROR *** Polling for incoming ack failed\n");
 			delete pPublisher;
 			delete pCodec;
 			return NULL;
@@ -140,7 +146,7 @@ VmsMsgSender *VmsEndpointFactory::CreateSender(	const std::string &strReceiverUR
 	}
 	catch(zmq::error_t &oZMQExcept)
 	{
-		printf("***ERROR*** Encountered ZMQ exception\n<%s>\n\n",oZMQExcept.what());
+		fprintf(stderr, "***ERROR*** Encountered ZMQ exception\n<%s>\n\n",oZMQExcept.what());
 		//if something is thrown --> clean up!
 		delete pPublisher;
 		delete pCodec;
@@ -160,13 +166,15 @@ VmsMsgReceiver *VmsEndpointFactory::CreateReceiver(const std::string &strReceive
 	IVmsMsgCodec *pCodec = this->CreateCodec(strReceiverURL);
 	if(pCodec == NULL)
 	{
-		printf("*** ERROR *** Unable to create codec for given connection protocol!\n");
+		fprintf(stderr, "*** ERROR *** Unable to create codec for given connection protocol!\n");
 		return NULL;
 	}
 
 	try
 	{
+#ifdef DEBUG
 		printf("Listening for incoming \"connect\" requests @ %s\n", strReceiverURL.c_str());
+#endif
 		//open service REPLY socket in order to intercept 
 		//incoming "SUBSCRIBE TO" request
 		zmq::socket_t oReplier(*m_pContext, ZMQ_REP);
@@ -180,7 +188,7 @@ VmsMsgReceiver *VmsEndpointFactory::CreateReceiver(const std::string &strReceive
 		size_t iSize = oMsg.size();
 		if(!pCodec->Decode(pBuffer, iSize, pVistaMsg))
 		{
-			printf("*** ERROR *** Failed to decode potential <subscribe to> msg!\n");
+			fprintf(stderr, "*** ERROR *** Failed to decode potential <subscribe to> msg!\n");
 			return NULL;
 		}
 
@@ -188,11 +196,13 @@ VmsMsgReceiver *VmsEndpointFactory::CreateReceiver(const std::string &strReceive
 		std::string strPublisherURL = pStrMsg->GetString();
 		if(strPublisherURL.empty())
 		{
-			printf("*** ERROR *** Empty publisher URL\n");
+			fprintf(stderr, "*** ERROR *** Empty publisher URL\n");
 			delete pVistaMsg;
 			return NULL;
 		}
+#ifdef DEBUG
 		printf("Got new connect request for <%s>\n", strPublisherURL.c_str());
+#endif
 
 		pSubscriber = new zmq::socket_t(*m_pContext, ZMQ_SUB);
 		//connect to the given publisher
@@ -234,7 +244,7 @@ VmsMsgReceiver *VmsEndpointFactory::CreateReceiver(const std::string &strReceive
 	}
 	catch (zmq::error_t &oError)
 	{
-		printf("***ERROR*** Encountered ZMQ exception\n<%s>\n\n",oError.what());
+		fprintf(stderr, "***ERROR*** Encountered ZMQ exception\n<%s>\n\n",oError.what());
 	}
 	delete pVistaMsg;
 
@@ -262,7 +272,7 @@ IVmsMsgCodec *VmsEndpointFactory::CreateCodec(const std::string &strURL)
 	}
 	else
 	{
-		printf("*** ERROR *** Socket type currently not supported!\n");
+		fprintf(stderr, "*** ERROR *** Socket type currently not supported!\n");
 		return NULL;
 	}
 }

@@ -13,6 +13,7 @@
 #include <VistaInterProcComm/Concurrency/VistaThreadLoop.h>
 
 #include <stdio.h>
+#include <../../Software/VTK/Utilities/Doxygen/doc_makeall.cmake.in>
 
 /*
   This demo illustrates the use of VMS for a simple sender
@@ -71,7 +72,9 @@ public:
 
 			//print message info
 			++iNumMsgs;
+#ifdef DEBUG
 			printf("[Receiver] Received message #%d\n", iNumMsgs);
+#endif
 			//All the rest here is just "eye candy" i.e. we try to interpret
 			//the message.
 			//Try to convert to string message and output content
@@ -82,19 +85,27 @@ public:
 				done = (strContent == "final");
 				if(!done)
 				{
+#ifdef DEBUG
 					printf("[Receiver] Got string message!\n");
 					printf("\tcontent = %s\n", strContent.c_str());
+#endif
 				}
 				else
 				{
+#ifdef DEBUG
 					printf("[Receiver] Got terminate token!\n");
+#endif
 				}
 			}
 			else
 			{
+#ifdef DEBUG
 				printf("[Receiver] Got some other generic message!\n");
+#endif
 			}
+#ifdef DEBUG
 			printf("\n\n");
+#endif
 			//remember to clear the message!
 			delete pIncoming;
 		}
@@ -149,23 +160,29 @@ int main(int argc, char *argv[])
 	//determine if we are talking a remote or local setup
 	std::string strServiceURL = argv[1];
 	bool bIsLocalMode=false;
+#ifdef DEBUG
 	printf("[Sender] service socket @ %s\n", strServiceURL.c_str());
+#endif
 	if(strServiceURL.find("inproc",0,6)==0)
 	{
 		//we are intra-process (i.e. communicating between threads
 		//==> create a thread
+#ifdef DEBUG
 		printf("[Sender] Entering intra-process mode.\n");
+#endif
 		bIsLocalMode = true;
 
 	}
 	else if(strServiceURL.find("tcp",0,3)==0)
 	{
+#ifdef DEBUG
 		printf("[Sender] Entering inter-process mode.\n");
+#endif
 		bIsLocalMode = false;
 	}
 	else
 	{
-		printf("*** ERROR *** Socket type currently not supported!\n");
+		fprintf(stderr, "*** ERROR *** Socket type currently not supported!\n");
 		return NULL;
 	}
 	std::string strPublisherURL = argv[2];
@@ -188,10 +205,14 @@ int main(int argc, char *argv[])
 		//if we are in intra-process mode -> create the receiver
 		//this should be done BEFORE the sender is created!
 		//otherwise sender creation will block indefinitely!
+#ifdef DEBUG
 		printf("[Sender] Starting receiver thread in local mode!\n");
+#endif
 		pReceiver = new ReceiverThread(&oContext, strServiceURL);
 		pReceiver->Run();
+#ifdef DEBUG
 		printf("\tDONE!\n");
+#endif
 		//wait a little here in order to allow the receiver imp to
 		//get up and running before we try to connect to it!
 		VistaTimeUtils::Sleep(2000);
@@ -199,28 +220,38 @@ int main(int argc, char *argv[])
 
 	//create sender endpoint using the input parameter as URLs
 	VmsEndpointFactory oFactory = VmsEndpointFactory(&oContext);
+#ifdef DEBUG
 	printf("[Sender] Creating sender endpoint!\n");
+#endif
 	VmsMsgSender *pSender = oFactory.CreateSender(strServiceURL, strPublisherURL);
 	if(pSender != NULL)
 	{
+#ifdef DEBUG
 		printf("\tDONE!\n");
+#endif
 	}
 	else
 	{	
+#ifdef DEBUG
 		printf("\tFAILED!\n");
+#endif
 		return -1;
 	}
 
 	//send test messages
+#ifdef DEBUG
 	printf("[Sender] sending test messages\n\n");
+#endif
 	const int iNumMsg = 100;
 	for(int i=0; i<iNumMsg; ++i)
 	{
 		std::string strMsg = MSG_STRINGS[i%NUM_STRINGS]; 
 		if(!bIsLocalMode)
 		{
+#ifdef DEBUG
 			printf("[Sender] Sending message <%d>\n", i+1);
 			printf("\t<%s>\n", strMsg.c_str());
+#endif
 		}
 		//create a new string message for sending
 		VmsStringMsg *pMsg = new VmsStringMsg(strMsg);
@@ -231,10 +262,14 @@ int main(int argc, char *argv[])
 		//hereafter!
 		pSender->SendMsg(pMsg);
 	}
+#ifdef DEBUG
 	printf("[Sender] DONE!\n\n");
+#endif
  
 	//cleanup and shutdown
+#ifdef DEBUG
 	printf("[Sender] Shutting down\n");
+#endif
 	//send one final message in order to allow the client
 	//to terminate correctly
 	VmsStringMsg *pFinalMsg = new VmsStringMsg("final");
@@ -248,5 +283,7 @@ int main(int argc, char *argv[])
 	}
 
 	delete pSender;
+#ifdef DEBUG
 	printf("\nDONE!\n");
+#endif
 }

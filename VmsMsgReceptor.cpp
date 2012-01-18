@@ -71,7 +71,7 @@ int VmsMsgReceptor::RegisterHandler(VmsMsg *pMsgType, VmsMsgHandler *pHandler)
 	int id=pFactory->GetGlobalTypeId(*pMsgType);
 	if(id < 0)
 	{
-		printf("*** ERROR *** [VmsMsgReceptor::RegisterHandler] Msg type not registered with factory!");
+		fprintf(stderr, "*** ERROR *** [VmsMsgReceptor::RegisterHandler] Msg type not registered with factory!");
 		return -1;
 	}
 	
@@ -105,19 +105,21 @@ int VmsMsgReceptor::ProcessIncomingMsg()
 	//error checking
 	if(id < 0 || static_cast<size_t>(id) >= m_vecHandlers.size())
 	{
-		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] Invalid message type!\n");
+		fprintf(stderr, "*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] Invalid message type!\n");
 		return -1;
 	}
 	VmsMsgHandler *pHnd = m_vecHandlers[static_cast<size_t>(id)];
 	if(pHnd == NULL)
 	{
-		printf("*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] No handler for message type id <%d>!\n", id);
+		fprintf(stderr, "*** ERROR *** [VmsMsgReceptor::ProcessIncomingMsg] No handler for message type id <%d>!\n", id);
 		return -1;
 	}
 	
 	//Pass messag to the given handler for that message type
 	int iret = pHnd->HandleMessage(pMsg);
 
+	// @TODO We need to return iret to the sender. Maybe perfect for request-reply?
+	
 	//free the message because we won't use it any more
 	delete pMsg;
 
