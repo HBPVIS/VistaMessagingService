@@ -40,7 +40,7 @@
 /*============================================================================*/
 #include "VmsConfig.h"
 #include "VmsMsg.h"
-
+#include <VistaAspects/VistaGenericFactory.h>
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
@@ -78,6 +78,16 @@ protected:
 
 private:
 	std::string m_strMsg;
+};
+
+
+class VmsStringMsgCreator : public IVistaCreator<IVistaSerializable>
+{
+public:
+	VmsStringMsg* CreateInstance()
+	{
+		return new VmsStringMsg();
+	}
 };
 
 

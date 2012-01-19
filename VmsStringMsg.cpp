@@ -81,16 +81,9 @@ std::string VmsStringMsg::GetSignature() const
 int VmsStringMsg::SerializeMsgContent(IVistaSerializer &oSer) const
 {
 	int iSize = 0;
-	//serialize header
-	int iret = VmsMsg::Serialize(oSer);
-	//rudimentary error handling 
-	if(iret < 0)
-		return -1;
-	else
-		iSize += iret;
 
 	//write length encoded string
-	iret = oSer.WriteInt32((int)m_strMsg.size());
+	int iret = oSer.WriteInt32((int)m_strMsg.size());
 	if(iret < 0)
 		return -1;
 	else
@@ -108,15 +101,9 @@ int VmsStringMsg::SerializeMsgContent(IVistaSerializer &oSer) const
 int VmsStringMsg::DeSerializeMsgContent(IVistaDeSerializer &oDeser)
 {
 	int iSize = 0;
-	int iret = VmsMsg::DeSerialize(oDeser);
-	//rudimentary error handling 
-	if(iret < 0)
-		return -1;
-	else
-		iSize += iret;
 
 	int iLen = 0;
-	iret = oDeser.ReadInt32(iLen);
+	int iret = oDeser.ReadInt32(iLen);
 	if(iret < 0)
 		return -1;
 	else

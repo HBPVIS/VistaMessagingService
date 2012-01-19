@@ -97,7 +97,7 @@ int VmsMsgReceptor::ProcessIncomingMsg()
 {
 	//receive the message 
 	VmsMsg * pMsg=m_pMsgReceiver->ReceiveMsg();
-	
+
 	//retrieve globally unique type id
 	VistaMarshalledObjectFactory *pFactory = VistaMarshalledObjectFactory::GetSingleton();
 	VistaType::sint32 id = pFactory->GetGlobalTypeId(*pMsg);
@@ -122,7 +122,6 @@ int VmsMsgReceptor::ProcessIncomingMsg()
 	
 	//free the message because we won't use it any more
 	delete pMsg;
-
 	return iret;
 }
 
