@@ -40,6 +40,8 @@ class IVistaDeSerializer;
 /*============================================================================*/
 #include "VmsConfig.h"
 #include <VistaAspects/VistaSerializable.h>
+#include <VistaAspects/VistaGenericFactory.h>
+
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
@@ -82,6 +84,15 @@ protected:
 
 private:
 	int m_iTicket;
+};
+
+class VMSAPI VmsMsgCreator : public IVistaCreator<IVistaSerializable>
+{
+public:
+	VmsMsgCreator() {};
+	virtual ~VmsMsgCreator() {};
+	
+	virtual VmsMsg* CreateInstance() = 0;
 };
 
 
