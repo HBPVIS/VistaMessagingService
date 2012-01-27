@@ -57,15 +57,20 @@ VmsMsgReceiver::~VmsMsgReceiver()
 VmsMsg *VmsMsgReceiver::ReceiveMsg()
 {
 	zmq::message_t oZMQMsg;
-	try
+	while (true)
 	{
-		m_pSubscriber->recv(&oZMQMsg);
+		try
+		{
+			m_pSubscriber->recv(&oZMQMsg);
+			if (oZMQMsg.size() > 0) break;
+		}
+		catch(zmq::error_t &oError)
+		{
+			fprintf(stderr, "*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
+			return NULL;
+		}
 	}
-	catch(zmq::error_t &oError)
-	{
-		fprintf(stderr, "*** ERROR *** zmq send failed\n\t<%s>\n\n", oError.what());
-		return NULL;
-	}
+	
 	//decode the message content
 	VmsMsg *pMsg = NULL;
 	if(!m_pCodec->Decode(static_cast<VistaType::byte*>(oZMQMsg.data()), oZMQMsg.size(), pMsg))
