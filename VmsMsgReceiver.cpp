@@ -44,7 +44,8 @@ VmsMsgReceiver::VmsMsgReceiver(zmq::socket_t *pSubscriber,
 							   IVmsMsgCodec *pCodec)
 :	m_pSubscriber(pSubscriber),
 	m_pCodec(pCodec)
-{}
+{
+}
 
 
 VmsMsgReceiver::~VmsMsgReceiver()

@@ -93,6 +93,8 @@ public:
 	virtual ~VmsMsgCreator() {};
 	
 	virtual VmsMsg* CreateInstance() = 0;
+
+	virtual void DestroyInstance( IVistaSerializable * pMsg) = 0;
 };
 
 

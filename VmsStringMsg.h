@@ -81,12 +81,18 @@ private:
 };
 
 
-class VmsStringMsgCreator : public IVistaCreator<IVistaSerializable>
+class VMSAPI VmsStringMsgCreator : public VmsMsgCreator
 {
 public:
 	VmsStringMsg* CreateInstance()
 	{
 		return new VmsStringMsg();
+	}
+
+	void DestroyInstance( IVistaSerializable * pMsg)
+	{
+		if(pMsg!=0)
+			delete (VmsStringMsg*)pMsg;
 	}
 };
 
