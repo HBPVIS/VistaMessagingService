@@ -115,7 +115,7 @@ int VmsMsgReceptor::ProcessIncomingMsg()
 		return -1;
 	}
 	
-	//Pass messag to the given handler for that message type
+	//Pass message to the given handler for that message type
 	int iret = pHnd->HandleMessage(pMsg);
 
 	// @TODO We need to return iret to the sender. Maybe perfect for request-reply?
