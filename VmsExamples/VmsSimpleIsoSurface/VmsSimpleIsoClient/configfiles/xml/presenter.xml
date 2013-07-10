@@ -1,0 +1,146 @@
+<module>
+	<nodespace>
+	</nodespace>
+	<graph>
+		<node name="dtrack" type="DriverSensor">
+			<param name="sensor" value="1"/>
+			<param name="type" value="BODY"/>
+			<param name="driver" value="DTRACK"/>
+		</node>
+		
+		<!-- this will give the sampling mode to the history project
+			 node, a value of "0" means "LAZY" while a value of "1"
+			 means "HOT". There is no other sampling value currently -->
+		<node name="sampling_mode" type="ConstantValue[int]">
+			<param name="mode" value="1"/>
+		</node>
+		
+		<node name="project_dtrack" type="HistoryProject">
+			<param name="project">POSITION, ORIENTATION</param>
+		</node>
+		
+		<!-- keyboard handling for the buttons -->
+		<node name="keyboard" type="DriverSensor">
+			<param name="sensor" value="0"/>
+			<param name="driver" value="KEYBOARD"/>
+		</node>
+		
+		<node name="project_keyboard" type="HistoryProject">
+			<param name="project">KEY</param>
+		</node>
+		
+		<node name ="dd" type = "DeviceDebug" />
+			
+		<node name="keyboard_route" type="ValueToTrigger[int]">
+			<param name="mapping"> 
+				1073, left_button, 
+				1081, right_button,
+				1063, f5esc,
+				27, f5esc,
+				46,   fullscreen,
+				1065, minus,
+				1066, plus
+			</param>
+			<param name="ignorelist"> 
+				0
+			</param>
+		</node>
+		
+		<node name="viewer" type="ViewerSource">
+			<param name="displaysystem" value="MAIN" />
+		</node>
+		
+		<node name="application_context_node" type="application_context">
+			<param name="object" value="application_context_object"/>
+		</node>		
+
+		<node name="translate_pos_tracker" type="Add[VistaVector3D]" />
+		<node name="tracker_offset" type="ConstantValue[VistaVector3D]">
+			<param name="value" value="0,-1095,1093" />
+		</node>
+		
+		<node name="scale_pos" type="Multiply[float,VistaVector3D]" />
+		<node name="scale_factor" type="ConstantValue[float]">
+			<param name="value" value="0.001" />
+		</node>
+		
+		<!-- rotate orientation 180 degrees around y axis   -->
+		<node name="rotate" type="Multiply[VistaTransformMatrix]"/>
+		<node name="minus_y_axis" type="ConstantValue[VistaQuaternion]">
+			<param name="value">0.0, -1.0, 0.000, 0.000</param>
+		</node>	  
+		
+		<node name="rotate_pos" type="Multiply[VistaTransformMatrix,VistaVector3D]" />
+		<node name="mat2quat" type="TypeConvert[VistaTransformMatrix,VistaQuaternion]" />
+		<node name="quat2mat" type="TypeConvert[VistaQuaternion,VistaTransformMatrix]" />
+
+
+		<node name="vpos" type="TextOverlay[VistaVector3D]">
+			<param name="prefix" value="3p: "/>
+			<param name="x_pos" value="0.1"/>
+			<param name="y_pos" value="0.35"/>
+			<param name="font" value="TYPEWRITER"/>
+			<param name="red" value="255"/>
+			<param name="size" value="30"/>
+		</node>
+		
+		<node name="vori" type="TextOverlay[VistaQuaternion]">
+			<param name="prefix" value="3q: "/>
+			<param name="x_pos" value="0.1"/>
+			<param name="y_pos" value="0.40"/>
+			<param name="font" value="TYPEWRITER"/>
+			<param name="red" value="255"/>
+			<param name="size" value="30"/>
+		</node>
+		
+		<node name="camera_transform" type="GetTransform">
+			<param name="object" value="CAM:MAIN" />
+			<param name="mode" value="WORLD" />
+			<!--<param name="object" value="viscontroller_transformable" />-->
+		</node>
+
+
+	</graph>
+	<edges>
+		<edge fromnode="dtrack"        tonode="project_dtrack" fromport="history" toport="history" />
+		<edge fromnode="sampling_mode" tonode="project_dtrack" fromport="value"   toport="sampling_mode" />
+		
+		<!-- <edge fromnode="keyboard" tonode="dd" fromport="history" toport="history" /> -->
+		<!-- tracker offset -->
+		<edge fromnode="project_dtrack" tonode="translate_pos_tracker" fromport="POSITION" toport="first" />
+		<edge fromnode="tracker_offset" tonode="translate_pos_tracker" fromport="value"    toport="second" />
+		
+		<!-- scale: mm -> m -->
+		<edge fromnode="scale_factor"          tonode="scale_pos" fromport="value" toport="first" />
+		<edge fromnode="translate_pos_tracker" tonode="scale_pos" fromport="out"   toport="second" />
+		
+		<edge fromnode="camera_transform" tonode="rotate_pos" fromport="transform" toport="first" />
+		<edge fromnode="scale_pos"      tonode="rotate_pos" fromport="out"         toport="second" />
+
+		<!-- route into application context -->
+		<edge fromnode="rotate_pos"      tonode="application_context_node" fromport="out"         toport="pointer_pos" />
+		<edge fromnode="mat2quat" 		tonode="application_context_node" fromport="out" toport="pointer_ori" />
+		
+		<edge fromnode="project_dtrack" tonode="quat2mat" fromport="ORIENTATION" toport="in" />
+		<edge fromnode="quat2mat" tonode="rotate" fromport="out" toport="second" />
+		<edge fromnode="camera_transform" tonode="rotate" fromport="transform" toport="first" />
+		<edge fromnode="rotate" tonode="mat2quat" fromport="out" toport="in" />
+				
+		<!-- button presses -->
+		<edge fromnode="keyboard"      tonode="project_keyboard" fromport="history" toport="history" />
+		<edge fromnode="sampling_mode" tonode="project_keyboard" fromport="value"   toport="sampling_mode" />
+		
+		<edge fromnode="viewer" tonode="application_context_node" fromport="orientation" toport="viewer_ori"/>
+		<edge fromnode="viewer" tonode="application_context_node" fromport="position" toport="viewer_pos"/>
+		
+
+		<edge fromnode="project_keyboard" tonode="keyboard_route" fromport="KEY" toport="value" />
+		<edge fromnode="keyboard_route"   tonode="application_context_node" fromport="left_button" toport="select" />
+		<!-- <edge fromnode="keyboard_route"   tonode="application_context_node" fromport="f5esc" toport="trigger" /> -->
+		<!-- <edge fromnode="keyboard_route"   tonode="application_context_node" fromport="left_button"  toport="resize" /> -->
+		<!-- <edge fromnode="keyboard_route"   tonode="application_context_node" fromport="right_button" toport="select" /> -->
+		<!-- <edge fromnode="keyboard_route"   tonode="application_context_node" fromport="plus" toport="reset" /> -->
+		<!-- <edge fromnode="keyboard_route"   tonode="application_context_node" fromport="fullscreen" toport="switchstate" /> -->
+		
+	</edges>
+</module>

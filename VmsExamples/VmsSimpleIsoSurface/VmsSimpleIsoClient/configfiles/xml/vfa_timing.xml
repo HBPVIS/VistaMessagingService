@@ -1,0 +1,15 @@
+<!-- $Id: vfa_timing.xml 35308 2013-05-29 09:35:00Z bh736275 $ -->
+<module>
+	<nodespace>
+	</nodespace>
+	<graph>
+		<node name="timer" type="Timer"></node>
+
+		<node name="application_context_node" type="application_context">
+			<param name="object" value="application_context_object"/>
+		</node>	
+	</graph>
+	<edges>
+      	<edge fromnode="timer"  tonode="application_context_node" fromport="time" toport="time" />
+	</edges>
+</module>

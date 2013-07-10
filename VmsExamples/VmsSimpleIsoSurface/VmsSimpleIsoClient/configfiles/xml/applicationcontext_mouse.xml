@@ -1,0 +1,64 @@
+<!-- this xml file connects the mouse input for the driver
+     MOUSE to some outputs which will update their content
+     upon change of the value. -->
+<module>
+	<nodespace>
+	</nodespace>
+	<graph>
+		<!-- data source... a mouse -->
+		<node name="mouse" type="DriverSensor">
+			<param name="sensor" value="0"/>
+			<param name="driver" value="MOUSE"/>
+		</node>
+		<!-- project the necessary information from the mouse history -->
+        <!-- in this demo, we are not interested in the mouse history,
+             but only in the last value (LAZYSAMPLING), but for demonstration
+             purposes, we simply extract every attribute we can get from
+             the mouse driver -->
+		<node name="project_mouse" type="HistoryProject">
+			<param name="project">X_POS, Y_POS, MIDDLE_BUTTON, RIGHT_BUTTON, LEFT_BUTTON</param>
+		</node>
+        <!-- this will give the sampling mode to the history project
+             node, a value of "0" means "LAZY" while a value of "1"
+             means "HOT". There is no other sampling value currently -->
+		<node name="project_mode" type="ConstantValue[int]">
+			<param name="value" value="0"/>
+		</node>
+
+		<!-- DONE -->
+
+		<node name="3dmouse" type="3DMouseTransform">
+			<param name="displaysystem" value="MAIN"/>
+			<param name="viewport" value="MAIN_VIEWPORT"/>
+			<param name="in_world_coordinates" value="TRUE"/>
+		</node>
+		
+		<node name="viewer" type="ViewerSource">
+        	<param name="displaysystem" value="MAIN" />
+		</node>
+					
+		<node name="application_context_node" type="application_context">
+			<param name="object" value="application_context_object"/>
+		</node>		
+		
+	</graph>
+	<edges>
+		<!-- connect mouse -|
+		             mode   -> project -->
+		<edge fromnode="mouse" tonode="project_mouse" fromport="history" toport="history"/>
+		<edge fromnode="project_mode" tonode="project_mouse" fromport="value" toport="sampling_mode"/>
+		
+		<edge fromnode="project_mouse" tonode="3dmouse" fromport="X_POS" toport="x_pos"/>
+		<edge fromnode="project_mouse" tonode="3dmouse" fromport="Y_POS" toport="y_pos"/>
+		
+		<edge fromnode="3dmouse" tonode="application_context_node" fromport="orientation" toport="pointer_ori"/>
+		<edge fromnode="3dmouse" tonode="application_context_node" fromport="position" toport="pointer_pos"/>
+		
+		<edge fromnode="viewer" tonode="application_context_node" fromport="orientation" toport="viewer_ori"/>
+		<edge fromnode="viewer" tonode="application_context_node" fromport="position" toport="viewer_pos"/>
+
+		<edge fromnode="project_mouse" tonode="application_context_node" fromport="MIDDLE_BUTTON" toport="select"/>
+		<!-- <edge fromnode="project_mouse" tonode="application_context_node" fromport="RIGHT_BUTTON" toport="trigger"/> -->
+
+	</edges>
+</module>

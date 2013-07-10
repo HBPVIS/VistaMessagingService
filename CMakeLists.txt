@@ -18,5 +18,5 @@ set( VMS_COMMON_BUILD TRUE )
 vista_conditional_add_subdirectory( VMS_BUILD_BASE_LIB	VmsBase ON )
 vista_conditional_add_subdirectory( VMS_BUILD_ZMQ_LIB   VmsZMQBindings ON )
 vista_conditional_add_subdirectory( VMS_BUILD_TESTS 	VmsTesting ON )
-#vista_conditional_add_subdirectory( VMS_BUILD_TESTS 	VmsExamples ON )
+vista_conditional_add_subdirectory( VMS_BUILD_EXAMPLES 	VmsExamples ON )
 

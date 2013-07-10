@@ -1,0 +1,97 @@
+<module>
+	<nodespace>
+	</nodespace>
+	<graph>
+		<node name="stick_source" type="DriverSensor">
+			<param name="sensor" value="0"/>
+			<param name="type" value="STICK"/>
+			<param name="driver" value="DTRACK"/>
+		</node>
+		
+		<node name="stick" type="HistoryProject">
+			<param name="project">POSITION, ORIENTATION, DSCALAR</param>
+		</node>
+		
+		<node name="sampling_mode" type="ConstantValue[int]">
+			<param name="mode" value="0" />
+		</node>
+		
+		<!-- tracker conversion -->
+		<node name="1_to_1000" type="ConstantValue[float]">
+			<param name="value" value="0.001"/>
+		</node>
+		<node name="scale_pos" type="Multiply[float,VistaVector3D]" />
+
+		<node name="to_dtrack_origin" type="ConstantValue[VistaVector3D]">
+			<param name="value" value="0,0,0"/>
+			<!-- <param name="value" value="0,-1093,450"/> -->
+		</node>
+		<node name="translate_pos" type="Add[VistaVector3D]" />
+		
+		
+		<node name="select_button" type="TypeConvert[double,bool]" />
+		<node name="sphere_button" type="TypeConvert[double,bool]" />
+		<node name="plane_button" type="TypeConvert[double,bool]" />
+		
+		<node name="pause_button" type="TypeConvert[double,bool]" />
+		<node name="left_button" type="TypeConvert[double,bool]" />
+		<node name="right_button" type="TypeConvert[double,bool]" />
+		<node name="reset_button" type="TypeConvert[double,bool]" />
+		
+		<node name="rotate" type="Multiply[VistaTransformMatrix]"/>
+		<node name="minus_y_axis" type="ConstantValue[VistaQuaternion]">
+			<param name="value">0.00, -1.0, 0.000, 0.000</param>
+		</node>
+
+		<node name="application_context_node" type="application_context">
+			<param name="object" value="application_context_object"/>
+		</node>
+		
+		<node name="camera_transform" type="GetTransform">
+			<param name="object" value="CAM:MAIN" />
+			<param name="mode" value="WORLD" />
+			<!--<param name="object" value="viscontroller_transformable" />-->
+		</node>
+		<node name="mat2quat" type="TypeConvert[VistaTransformMatrix,VistaQuaternion]" />
+		<node name="quat2mat" type="TypeConvert[VistaQuaternion,VistaTransformMatrix]" />
+		<node name="rotate_pos" type="Multiply[VistaTransformMatrix,VistaVector3D]" />
+		
+	</graph>
+	<edges>
+		<edge fromnode="stick_source"  tonode="stick" fromport="history" toport="history" />
+		<edge fromnode="sampling_mode" tonode="stick" fromport="value" toport="sampling_mode" />
+		
+        <edge fromnode="stick"            tonode="translate_pos" fromport="POSITION" toport="second" />
+        <edge fromnode="to_dtrack_origin" tonode="translate_pos" fromport="value"    toport="first" />
+		
+        <edge fromnode="translate_pos" tonode="scale_pos" fromport="out"   toport="second" />
+        <edge fromnode="1_to_1000"     tonode="scale_pos" fromport="value" toport="first" />
+
+		<edge fromnode="camera_transform" tonode="rotate_pos" fromport="transform" toport="first" />
+		<edge fromnode="scale_pos"      tonode="rotate_pos" fromport="out"         toport="second" />
+        <edge fromnode="rotate_pos" tonode="application_context_node" fromport="out" toport="pointer_pos" />
+        
+		<edge fromnode="stick" tonode="quat2mat" fromport="ORIENTATION" toport="in" />
+		
+		<edge fromnode="quat2mat" tonode="rotate" fromport="out" toport="first" />
+		<edge fromnode="camera_transform" tonode="rotate" fromport="transform" toport="second" />
+		
+		<edge fromnode="rotate" tonode="mat2quat" fromport="out" toport="in" />
+
+        <edge fromnode="mat2quat" tonode="application_context_node" fromport="out" toport="pointer_ori" />
+
+
+	<!-- select button -->
+	<edge fromnode="stick" tonode="select_button" fromport="DSCALAR_0" toport="in" />
+	<edge fromnode="select_button" tonode="application_context_node" fromport="out" toport="select"/>
+	
+	<edge fromnode="stick" tonode="sphere_button" fromport="DSCALAR_3" toport="in" />
+	<edge fromnode="sphere_button" tonode="application_context_node" fromport="out" toport="switchWidget"/>
+	
+
+	
+		
+		
+		
+	</edges>
+</module>

@@ -1,0 +1,21 @@
+<!-- $Id: vfa_viewerupdate.xml 35308 2013-05-29 09:35:00Z bh736275 $ -->
+<module>
+	<nodespace>
+	</nodespace>
+	<graph>
+    	<node name="viewer" type="ViewerSource">
+			<param name="displaysystem" value="MAIN" />
+		</node>
+
+		<node name="application_context_node" type="application_context">
+			<param name="object" value="application_context_object"/>
+		</node>
+
+	</graph>
+	<edges>
+
+      <edge fromnode="viewer"  tonode="application_context_node" fromport="orientation" toport="viewer_ori" />
+      <edge fromnode="viewer"  tonode="application_context_node" fromport="position" toport="viewer_pos" />
+
+	</edges>
+</module>
