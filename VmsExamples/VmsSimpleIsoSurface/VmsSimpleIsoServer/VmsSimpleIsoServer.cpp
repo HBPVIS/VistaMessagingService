@@ -113,8 +113,8 @@ void VmsSimpleIsoServer::Run()
 	vstr::out() << "Entering server loop" << std::endl;
 
 	//cache the message tags for easy access
-	const type_info& TERMINATE_TAG = typeid(VmsSimpleIsoVocabulary::TerminateMsg);
-	const type_info& UPDATE_ISO_TAG = typeid(VmsSimpleIsoVocabulary::RequestIsosurfaceMsg);
+	const std::type_info& TERMINATE_TAG = typeid(VmsSimpleIsoVocabulary::TerminateMsg);
+	const std::type_info& UPDATE_ISO_TAG = typeid(VmsSimpleIsoVocabulary::RequestIsosurfaceMsg);
 	
 	//enter service loop:
 	//as long as there are new isovalues ==> we'll answer with the corresponding surface
@@ -130,7 +130,7 @@ void VmsSimpleIsoServer::Run()
 		//we have nothing to add -> just ping-pong the message as ack
 		m_pServiceSocket->SendAck(pMsg);
 		
-		const type_info& rMsgType = typeid(*pMsg);
+		const std::type_info& rMsgType = typeid(*pMsg);
 
 		if(rMsgType == TERMINATE_TAG)
 		{
