@@ -22,7 +22,7 @@
 
 #include <string>
 #include <cassert>
-
+#include <cstring>
 
 const std::string STR_TEST_SOCKET = "inproc://my_test_socket"; //"tcp://127.0.0.1:5555";
 const std::string STR_TEST_MSG = "Hello World!";
