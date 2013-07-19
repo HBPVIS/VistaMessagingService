@@ -33,7 +33,7 @@
 		#define VMSZMQAPI __declspec(dllimport)
 	#endif
 #else // no Windows or static build
-	#define VMSBASEAPI
+	#define VMSZMQAPI
 #endif
 
 #endif //_VMSZMQCONFIG_H

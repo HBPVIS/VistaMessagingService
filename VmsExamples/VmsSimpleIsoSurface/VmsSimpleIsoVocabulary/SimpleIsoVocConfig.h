@@ -33,7 +33,7 @@
 		#define SIMPLEISOVOC_API __declspec(dllimport)
 	#endif
 #else // no Windows or static build
-	#define VMSTESTVOCABULARY_EXPORTS
+	#define SIMPLEISOVOC_API
 #endif
 
 #endif //_VISTAVISEXTCONFIG_H
