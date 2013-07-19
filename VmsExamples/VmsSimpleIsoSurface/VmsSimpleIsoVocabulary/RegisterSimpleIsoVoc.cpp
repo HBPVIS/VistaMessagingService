@@ -32,7 +32,7 @@
 /*============================================================================*/
 #include "RegisterSimpleIsoVoc.h"
 
-#include <Vmsbase/VmsVocabulary.h>
+#include <VmsBase/VmsVocabulary.h>
 
 #include "RequestIsosurfaceMsg.h"
 #include "TerminateMsg.h"
