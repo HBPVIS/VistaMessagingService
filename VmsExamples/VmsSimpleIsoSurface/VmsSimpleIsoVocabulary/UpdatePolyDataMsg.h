@@ -45,7 +45,7 @@ class vtkPolyData;
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-namespace VmsTestVocabulary
+namespace VmsSimpleIsoVocabulary
 {
 	/**
 	 *	This message transports a single vtkPolyData which is used to update

@@ -185,10 +185,10 @@ double VmsSimpleIsoClient::GetIsoVal() const
 bool VmsSimpleIsoClient::SendIsosurfaceRequest( double dTargetIsoVal )
 {
 	m_dIsoVal = dTargetIsoVal;
-	VmsTestVocabulary::RequestIsosurfaceMsg oMsg(m_dIsoVal);
+	VmsSimpleIsoVocabulary::RequestIsosurfaceMsg oMsg(m_dIsoVal);
 	
-	VmsTestVocabulary::RequestIsosurfaceMsg *pAck = 
-		dynamic_cast<VmsTestVocabulary::RequestIsosurfaceMsg*>(m_pRequestSocket->SendRequestWithAck(&oMsg));
+	VmsSimpleIsoVocabulary::RequestIsosurfaceMsg *pAck = 
+		dynamic_cast<VmsSimpleIsoVocabulary::RequestIsosurfaceMsg*>(m_pRequestSocket->SendRequestWithAck(&oMsg));
 	if(pAck == NULL || pAck->GetIsoVal() != m_dIsoVal)
 		return false;
 	return true;
@@ -197,10 +197,10 @@ bool VmsSimpleIsoClient::SendIsosurfaceRequest( double dTargetIsoVal )
 
 bool VmsSimpleIsoClient::SendTerminateRequest()
 {
-	VmsTestVocabulary::TerminateMsg oMsg;
+	VmsSimpleIsoVocabulary::TerminateMsg oMsg;
 	
-	VmsTestVocabulary::TerminateMsg *pAck = 
-		dynamic_cast<VmsTestVocabulary::TerminateMsg*>(m_pRequestSocket->SendRequestWithAck(&oMsg));
+	VmsSimpleIsoVocabulary::TerminateMsg *pAck = 
+		dynamic_cast<VmsSimpleIsoVocabulary::TerminateMsg*>(m_pRequestSocket->SendRequestWithAck(&oMsg));
 	if(pAck == NULL)
 		return false;
 	return true;
@@ -210,8 +210,8 @@ bool VmsSimpleIsoClient::SendTerminateRequest()
 void VmsSimpleIsoClient::CheckForIsosurfaceUpdate()
 {
 	//try to read a message here 
-	VmsTestVocabulary::UpdatePolyDataMsg *pMsg = 
-		dynamic_cast<VmsTestVocabulary::UpdatePolyDataMsg*>(m_pDataSocket->TryReceive(5));
+	VmsSimpleIsoVocabulary::UpdatePolyDataMsg *pMsg = 
+		dynamic_cast<VmsSimpleIsoVocabulary::UpdatePolyDataMsg*>(m_pDataSocket->TryReceive(5));
 
 	//if that worked ==> process it
 	if(pMsg != NULL && pMsg->GetData())
@@ -333,7 +333,7 @@ void VmsSimpleIsoClient::SetupCommunication()
 	//      the same vocabulary for the request connection and the data connection.
 	//		In more complex scenarios one would separate the two.
 	m_pVocabulary = new VmsVocabulary();
-	VmsTestVocabulary::RegisterMessages(m_pVocabulary);
+	VmsSimpleIsoVocabulary::RegisterMessages(m_pVocabulary);
 
 	//configure sender
 	m_pRequestSocket = m_pSocketFactory->CreateSendRequestSocket(m_strRequestSocketName, m_pVocabulary);

@@ -66,6 +66,7 @@ TEST_F(RequestSocketTest, TestSendRequestSync)
 
 	TestMsg *pMsg = new TestMsg(STR_TEST_MSG);
 	TestMsg *pAck = dynamic_cast<TestMsg*>(pRequestSocket->SendRequestWithAck(pMsg));
+	delete pMsg;
 
 	ASSERT_TRUE(pAck != NULL);
 	ASSERT_TRUE(pServer->GetMsgText() == STR_TEST_MSG);
@@ -96,6 +97,7 @@ TEST_F(RequestSocketTest, TestSendRequestAsync)
 
 	TestMsg *pMsg = new TestMsg(STR_TEST_MSG);
 	pRequestSocket->SendRequest(pMsg);
+	delete pMsg;
 
 	//...
 	//client code could do something useful now before finally accepting the ack below...

@@ -37,7 +37,7 @@
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
-namespace VmsTestVocabulary
+namespace VmsSimpleIsoVocabulary
 {
 	RequestIsosurfaceMsg::RequestIsosurfaceMsg()
 		:	m_dIsoVal(0.0)

@@ -45,7 +45,7 @@
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-namespace VmsTestVocabulary
+namespace VmsSimpleIsoVocabulary
 {
 	/**
 	 * just an empty message indicating that termination 

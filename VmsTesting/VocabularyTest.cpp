@@ -138,9 +138,9 @@ TEST_F(VocabularyTest, TestMarshallingUnregisteredMsg)
 	//read message 
 	VistaByteBufferDeSerializer oDeSer;
 	oDeSer.SetBuffer(oSer.GetBuffer(), oSer.GetBufferSize());
-	DummyMessage *pResult = dynamic_cast<DummyMessage*>(m_pVocabulary->UnMarshalMessage(oDeSer));
+	IVistaSerializable *pResult = m_pVocabulary->UnMarshalMessage(oDeSer);
 
-	//**magically** message should be identical 
+	//Make sure message unpacking failed as predicted
 	ASSERT_TRUE(pResult == NULL);
 }
 

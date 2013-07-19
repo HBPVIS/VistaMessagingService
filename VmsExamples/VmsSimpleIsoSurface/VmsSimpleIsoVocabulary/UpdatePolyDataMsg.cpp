@@ -41,7 +41,7 @@
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
-namespace VmsTestVocabulary
+namespace VmsSimpleIsoVocabulary
 {
 	UpdatePolyDataMsg::UpdatePolyDataMsg()
 		: m_pPolyData(NULL)

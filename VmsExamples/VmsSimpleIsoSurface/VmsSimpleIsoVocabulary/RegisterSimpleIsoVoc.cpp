@@ -40,9 +40,9 @@
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
-namespace VmsTestVocabulary
+namespace VmsSimpleIsoVocabulary
 {
-	int VmsTestVocabulary::RegisterMessages(VmsVocabulary *pVoc)
+	int VmsSimpleIsoVocabulary::RegisterMessages(VmsVocabulary *pVoc)
 	{
 		RequestIsosurfaceMsg oRequestIsoMsg;
 		int iret = pVoc->RegisterMessage(&oRequestIsoMsg, new RequestIsosurfaceMsg::TCreator());

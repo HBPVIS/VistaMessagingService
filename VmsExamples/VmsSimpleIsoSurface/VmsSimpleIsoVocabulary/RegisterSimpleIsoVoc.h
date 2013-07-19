@@ -43,7 +43,7 @@ class VmsVocabulary;
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-namespace VmsTestVocabulary
+namespace VmsSimpleIsoVocabulary
 {
 	/**
 	 *	Register all messages in this vocabulary with the given factory.

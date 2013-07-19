@@ -45,7 +45,7 @@
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-namespace VmsTestVocabulary
+namespace VmsSimpleIsoVocabulary
 {
 	/**
 	 * send a single isosurface value which triggers a request for an isosurface 

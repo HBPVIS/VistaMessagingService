@@ -112,8 +112,8 @@ void VmsSimpleIsoServer::Run()
 	vstr::out() << "Entering server loop" << std::endl;
 
 	//cache the message tags for easy access
-	const type_info& TERMINATE_TAG = typeid(VmsTestVocabulary::TerminateMsg);
-	const type_info& UPDATE_ISO_TAG = typeid(VmsTestVocabulary::RequestIsosurfaceMsg);
+	const type_info& TERMINATE_TAG = typeid(VmsSimpleIsoVocabulary::TerminateMsg);
+	const type_info& UPDATE_ISO_TAG = typeid(VmsSimpleIsoVocabulary::RequestIsosurfaceMsg);
 	
 	//enter service loop:
 	//as long as there are new isovalues ==> we'll answer with the corresponding surface
@@ -138,13 +138,13 @@ void VmsSimpleIsoServer::Run()
 		}
 		else if(rMsgType == UPDATE_ISO_TAG)
 		{
-			double dIsoVal = static_cast<VmsTestVocabulary::RequestIsosurfaceMsg*>(pMsg)->GetIsoVal();
+			double dIsoVal = static_cast<VmsSimpleIsoVocabulary::RequestIsosurfaceMsg*>(pMsg)->GetIsoVal();
 			vstr::out() << "Updating for " << dIsoVal << std::endl;
 			pFilter->SetValue(0, dIsoVal);
 			pFilter->Update();
 			vstr::out() << "\tDONE!" << std::endl;
 
-			VmsTestVocabulary::UpdatePolyDataMsg oMsg(pFilter->GetOutput());
+			VmsSimpleIsoVocabulary::UpdatePolyDataMsg oMsg(pFilter->GetOutput());
 			m_pDataSocket->Send(&oMsg);
 		}
 		else
@@ -225,7 +225,7 @@ void VmsSimpleIsoServer::SetupCommunication()
 	//      the same vocabulary for the request connection and the data connection.
 	//		In more complex scenarios one would separate the two.
 	m_pVocabulary = new VmsVocabulary();
-	VmsTestVocabulary::RegisterMessages(m_pVocabulary);
+	VmsSimpleIsoVocabulary::RegisterMessages(m_pVocabulary);
 
 	m_pServiceSocket = m_pSocketFactory->CreateAnswerRequestSocket(m_strServiceSocketName, m_pVocabulary);	
 	

@@ -37,7 +37,7 @@
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
-namespace VmsTestVocabulary
+namespace VmsSimpleIsoVocabulary
 {
 	TerminateMsg::TerminateMsg()
 	{ }
