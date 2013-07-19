@@ -13,6 +13,8 @@
 
 #include <VistaAspects/VistaAspectsUtils.h>
 
+#include <cmath>
+
 const int NUM_CHANNELS = 5;
 const int NUM_POLLS = 10;
 
