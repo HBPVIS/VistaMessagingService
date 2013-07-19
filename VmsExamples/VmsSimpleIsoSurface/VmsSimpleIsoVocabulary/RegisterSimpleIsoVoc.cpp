@@ -42,7 +42,7 @@
 /*============================================================================*/
 namespace VmsSimpleIsoVocabulary
 {
-	int VmsSimpleIsoVocabulary::RegisterMessages(VmsVocabulary *pVoc)
+	int RegisterMessages(VmsVocabulary *pVoc)
 	{
 		RequestIsosurfaceMsg oRequestIsoMsg;
 		int iret = pVoc->RegisterMessage(&oRequestIsoMsg, new RequestIsosurfaceMsg::TCreator());
