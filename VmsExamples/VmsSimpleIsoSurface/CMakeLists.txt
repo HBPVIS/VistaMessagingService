@@ -10,7 +10,7 @@ endif( NOT VMSEXAMPLES_COMMON_BUILD)
 # this variable indicates to sub-projects that they are build all together
 set( VMSSIMPLEISO_COMMON_BUILD TRUE )
 
+add_subdirectory( VmsSimpleIsoVocabulary )
 add_subdirectory( VmsSimpleIsoClient )
 add_subdirectory( VmsSimpleIsoServer )
-add_subdirectory( VmsSimpleIsoVocabulary )
 
