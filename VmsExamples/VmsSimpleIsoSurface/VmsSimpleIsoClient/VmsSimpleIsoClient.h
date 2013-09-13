@@ -51,7 +51,7 @@ class vtkPolyData;
 /*============================================================================*/
 /* INCLUDES																	  */
 /*============================================================================*/
-#include <VistaFlowLib/Visualization/GeometryVisualization/VflGeometryVis.h>
+#include <VistaFlowLib/Visualization/Geometry/VflGeometryVis.h>
 #include <VistaBase/VistaBaseTypes.h>
 
 #include <string>
