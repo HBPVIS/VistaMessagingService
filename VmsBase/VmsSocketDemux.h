@@ -41,6 +41,7 @@ class VmsReceiveSocket;
 #include "VmsBaseConfig.h"
 
 #include <vector>
+#include <stdlib.h>
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
