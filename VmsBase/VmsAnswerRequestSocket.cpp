@@ -53,6 +53,11 @@ IVistaSerializable * VmsAnswerRequestSocket::ReceiveRequest()
 	return m_pCore->Receive();
 }
 
+IVistaSerializable * VmsAnswerRequestSocket::TryReceive( const int iWaitMilliSecs )
+{
+	return m_pCore->ReceiveNonBlocking(iWaitMilliSecs);
+}
+
 void VmsAnswerRequestSocket::SendAck( IVistaSerializable *pAck )
 {
 	m_pCore->Send(pAck);

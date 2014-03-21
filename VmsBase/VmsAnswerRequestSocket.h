@@ -71,6 +71,16 @@ public:
 	 *	it's the caller's responsibility to free said message.
 	 */
 	IVistaSerializable *ReceiveRequest();
+
+	/**
+	 *	Try to receive an incoming message for iWaitMilliSecs ms.
+	 *	If there is no message after this time, NULL will be returned.
+	 *
+	 *	Calling code will assume ownership of the message created by this 
+	 *	call, i.e. it is the caller's responsibility to free the message
+	 *	after use.
+	 */
+	IVistaSerializable *TryReceive(const int iWaitMilliSecs);
 	
 	/**
 	 * Send out an ack message.

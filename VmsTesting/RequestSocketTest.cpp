@@ -188,6 +188,35 @@ TEST_F(RequestSocketTest, TestPairing)
 }
 
 
+TEST_F(RequestSocketTest, TestTryReceive)
+{
+	VmsAnswerRequestSocket *pServer = m_pSocketFactory->CreateAnswerRequestSocket(STR_TEST_SOCKET, m_pVocabulary);
+	VmsSendRequestSocket *pClient = m_pSocketFactory->CreateSendRequestSocket(STR_TEST_SOCKET, m_pVocabulary);
+
+	
+	IVistaSerializable *pDummy = pServer->TryReceive(10);
+	EXPECT_TRUE(pDummy == NULL);
+
+	TestMsg *pMsg = new TestMsg(STR_TEST_MSG);
+	pClient->SendRequest(pMsg);
+
+	TestMsg *pReceivedMsg = dynamic_cast<TestMsg*>(pServer->TryReceive(10));
+	EXPECT_TRUE(pReceivedMsg != NULL);
+	EXPECT_EQ(pMsg->GetMsgText(), pReceivedMsg->GetMsgText());
+
+	//...this is it. Just clean up properly, i.e. do send an ack and so on.
+	pServer->SendAck(pReceivedMsg);
+	delete pReceivedMsg;
+	delete pMsg;
+
+	TestMsg *pAck = dynamic_cast<TestMsg*>(pClient->ReceiveAck());
+	delete pAck;
+
+	delete pClient;
+	delete pServer;
+}
+
+
 int main( int argc, char** argv )
 {
 	::testing::InitGoogleTest(&argc, argv);
