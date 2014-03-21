@@ -90,7 +90,7 @@ VmsSocketCore * VmsZMQSocketCoreFactory::CreateReceiveCore( const std::string& s
 	int iret = zmq_connect(pZMQSocket, strAddress.c_str());
 	if(iret != 0)
 	{
-		vstr::errp() << "[VmsZMQ] Unable to connect SUB socket!" << std::endl;
+		vstr::errp() << "[VmsZMQ] Unable to connect PUB socket!" << std::endl;
 		zmq_close(pZMQSocket);
 		return NULL;
 	}
