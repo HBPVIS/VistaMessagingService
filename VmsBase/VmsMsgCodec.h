@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsZMQSocketCore.h			 RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsMsgCodec.h				 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -27,56 +27,46 @@
 /*============================================================================*/
 /* $Id$ */
 
-#ifndef VMSZMQSOCKETCORE_H
-#define VMSZMQSOCKETCORE_H
+#ifndef VMSMSGCODEC_H
+#define VMSMSGCODEC_H
 
 /*============================================================================*/
 /* FORWARD DECLARATIONS														  */
 /*============================================================================*/
-class VmsMsgCodec;
 class IVistaSerializable;
+class IVistaSerializer;
+class IVistaDeSerializer;
 
 /*============================================================================*/
 /* INCLUDES																	  */
 /*============================================================================*/
-#include "VmsZMQConfig.h"
-#include <VmsBase/VmsSocketCore.h>
-#include <VistaBase/VistaBaseTypes.h>
+#include "VmsBaseConfig.h"
 
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-class VMSZMQAPI VmsZMQSocketCore : public VmsSocketCore
+/**
+ *	A message codec defines a map from a concrete object to a serializer
+ *	and vice versa. This may include more steps than just "flattening" the
+ *	object into a byte buffer representation, e.g. marshalling it (i.e.
+ *	including both object type and state data) or just passing a pointer.
+ *	See specific implementations for details.
+ */
+class VMSBASEAPI VmsMsgCodec
 {
 public:
 	/**
-	 *	Create a new core. 
-	 *
-	 *	It is assumed that the socket is pre-configured prior to creating this
-	 *	core, i.e. it is fully bound/connected, already.
-	 *	The core takes ownership of its underlying socket i.e. it closes 
-	 *	it upon its own deletion. The same holds for the given codec.
+	 * Store a message to the given serializer
 	 */
-	VmsZMQSocketCore(void *pZMQSocket, VmsMsgCodec *pCodec);
-	virtual ~VmsZMQSocketCore();
-
-	virtual void Send( IVistaSerializable *pMsg );
-
-	virtual IVistaSerializable * Receive();
-
-	virtual IVistaSerializable *ReceiveNonBlocking(int iWaitTime);
+	virtual int EncodeMsg(IVistaSerializable *pMsg, IVistaSerializer &rSerializer) const = 0;
 
 	/**
-	 * Access the actual ZMQ socket.
-	 * USE AT YOUR OWN PERIL!
+	 * Retrieve a message from the given deserializer.
+	 *
+	 *	Clients should treat this as a new, i.e. they assume responsibility for
+	 *	the returned object.
 	 */
-	void *GetZMQSocket();
-
-protected:
-	IVistaSerializable *DecodeMessage(VistaType::byte *pBuffer, int iSize);
-
-private:
-	void *m_pSocket;
+	virtual IVistaSerializable *DecodeMsg(IVistaDeSerializer &rDeSer) const = 0;
 };
 
 

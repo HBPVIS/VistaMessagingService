@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <VmsBase/VmsMarshallingCodec.h>
+
 #include <VmsZMQBindings/VmsZMQSocketCore.h>
 #include <VmsZMQBindings/VmsZMQSocketCoreFactory.h>
 
@@ -37,6 +39,7 @@ public:
 
 protected:
 	VmsVocabulary *m_pVocabulary;
+	VmsMarshallingCodec *m_pCodec;
 	VmsZMQSocketCoreFactory *m_pFactory;
 	void *m_pContext;
 private:
@@ -57,7 +60,7 @@ TEST_F(SocketCoreTest, TestZMQCoreSendWithAck)
 	pServer->WaitForIsListening();
 
 	//create core
-	VmsSocketCore *pCore = m_pFactory->CreateSendRequestCore(STR_TEST_SOCKET, m_pVocabulary);
+	VmsSocketCore *pCore = m_pFactory->CreateSendRequestCore(STR_TEST_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 
 	//send out test message
 	TestMsg *pMsg = new TestMsg(STR_TEST_MSG);
@@ -82,7 +85,7 @@ TEST_F(SocketCoreTest, TestZMQCoreSendWithAck)
  */
 TEST_F(SocketCoreTest, TestZMQCoreReceiveWithAck)
 {
-	VmsSocketCore *pCore = m_pFactory->CreateAnswerRequestCore(STR_TEST_SOCKET, m_pVocabulary);
+	VmsSocketCore *pCore = m_pFactory->CreateAnswerRequestCore(STR_TEST_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 		
 	//create the "other end" for communication testing
 	//	we know we don't need the socket factory so we pass in NULL 

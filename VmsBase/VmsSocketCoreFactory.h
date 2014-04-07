@@ -34,7 +34,7 @@
 /* FORWARD DECLARATIONS														  */
 /*============================================================================*/
 class VmsSocketCore;
-class VmsVocabulary;
+class VmsMsgCodec;
 
 /*============================================================================*/
 /* INCLUDES																	  */
@@ -60,7 +60,7 @@ public:
 	 *	to the given address.
 	 */
 	virtual VmsSocketCore *CreateSendCore(const std::string& strAddress, 
-										  VmsVocabulary *pVocabulary) = 0;
+										  VmsMsgCodec *pCodec) = 0;
 	/**
 	 *	Create and configure a core for a VmsReceiveSocket.
 	 *
@@ -68,7 +68,7 @@ public:
 	 *	to a sender at the given address.
 	 */
 	virtual VmsSocketCore *CreateReceiveCore(const std::string& strAddress, 
-											 VmsVocabulary *pVocabulary) = 0;
+											 VmsMsgCodec *pCodec) = 0;
 	/**
 	 *	Create and configure a core for a VmsSendRequestSocket.
 	 *
@@ -76,7 +76,7 @@ public:
 	 *	to a server at the given address.
 	 */
 	virtual VmsSocketCore *CreateSendRequestCore(const std::string& strAddress, 
-												 VmsVocabulary *pVocabulary) = 0;
+												 VmsMsgCodec *pCodec) = 0;
 	/**
 	 *	Create and configure a core for a VmsAnswerRequestSocket.
 	 *
@@ -84,7 +84,7 @@ public:
 	 *	to the given address.
 	 */
 	virtual VmsSocketCore *CreateAnswerRequestCore(const std::string& strAddress, 
-												   VmsVocabulary *pVocabulary) = 0;
+												   VmsMsgCodec *pCodec) = 0;
 
 protected:
 	VmsSocketCoreFactory();

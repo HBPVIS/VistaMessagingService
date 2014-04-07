@@ -44,6 +44,14 @@ class VmsSocketCoreFactory;
 /*============================================================================*/
 #include "VmsBaseConfig.h"
 
+#include "VmsTypedReceiveSocket.h"
+#include "VmsTypedSendSocket.h"
+
+#include "VmsSocketCoreFactory.h"
+#include "VmsTypedSendSocket.h"
+#include "VmsTypedReceiveSocket.h"
+#include "VmsSerializingCodec.h"
+
 #include <string>
 #include <map>
 /*============================================================================*/
@@ -110,6 +118,18 @@ public:
 										  VmsVocabulary *pVocabulary);
 
 	/**
+	 *
+	 */
+	template<typename TMsgType>
+	VmsTypedSendSocket<TMsgType> *CreateTypedSendSocket(const std::string &strAddress);
+
+	/**
+	 * 
+	 */
+	template<typename TMsgType>
+	VmsTypedReceiveSocket<TMsgType> *CreateTypedReceiveSocket(const std::string &strAddress);
+
+	/**
 	 *	Create a VmsSendRequestSocket and connect it to a 
 	 *	VmsAnswerRequestSocket bound to the given address.
 	 */
@@ -144,6 +164,50 @@ private:
 	TProtocolMap m_mapPrefixToFactory;
 };
 
+
+
+
+
+/*============================================================================*/
+/* IMPLEMENTATION															  */
+/*============================================================================*/
+template<typename TMsgType>
+inline VmsTypedSendSocket<TMsgType>* VmsSocketFactory::CreateTypedSendSocket( const std::string &strAddress )
+{
+	VmsSocketCoreFactory *pFactory = this->GetCoreFactory(strAddress);
+	if(pFactory == NULL)
+		return NULL;
+
+	//create a serializing codec as default for this socket type for now.
+	//since the msg type is implicit, we can settle for this one in favor of
+	//the marshalling version.
+	VmsSerializingCodec<TMsgType> *pCodec = new VmsSerializingCodec<TMsgType>(new TMsgType::TCreator);
+
+	VmsSocketCore *pCore = pFactory->CreateSendCore(strAddress, pCodec);
+	if(pCore == NULL)
+		return NULL;
+
+	return new VmsTypedSendSocket<TMsgType>(pCore);
+}
+
+template<typename TMsgType>
+inline VmsTypedReceiveSocket<TMsgType>* VmsSocketFactory::CreateTypedReceiveSocket( const std::string &strAddress )
+{
+	VmsSocketCoreFactory *pFactory = this->GetCoreFactory(strAddress);
+	if(pFactory == NULL)
+		return NULL;
+
+	//create a serializing codec as default for this socket type for now.
+	//since the msg type is implicit, we can settle for this one in favor of
+	//the marshalling version.
+	VmsSerializingCodec<TMsgType> *pCodec = new VmsSerializingCodec<TMsgType>(new TMsgType::TCreator);
+
+	VmsSocketCore *pCore = pFactory->CreateReceiveCore(strAddress, pCodec);
+	if(pCore == NULL)
+		return NULL;
+
+	return new VmsTypedReceiveSocket<TMsgType>(pCore);
+}
 
 #endif // Include guard.
 

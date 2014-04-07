@@ -32,21 +32,23 @@
 /*============================================================================*/
 #include "VmsSocketCore.h"
 
-
+#include "VmsMsgCodec.h"
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
-VmsSocketCore::VmsSocketCore(VmsVocabulary *pVoc)
-	:	m_pVocabulary(pVoc)
+VmsSocketCore::VmsSocketCore(VmsMsgCodec *pCodec)
+	:	m_pCodec(pCodec)
 { }
 
 VmsSocketCore::~VmsSocketCore()
-{ }
-
-
-const VmsVocabulary *VmsSocketCore::GetVocabulary() const
 {
-	return m_pVocabulary;
+	delete m_pCodec;
+}
+
+
+const VmsMsgCodec *VmsSocketCore::GetCodec() const
+{
+	return m_pCodec;
 }
 
 /*============================================================================*/

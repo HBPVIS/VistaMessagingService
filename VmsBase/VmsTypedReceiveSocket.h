@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsZMQSocketCore.h			 RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsTypedReceiveSocket.h		 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -27,57 +27,88 @@
 /*============================================================================*/
 /* $Id$ */
 
-#ifndef VMSZMQSOCKETCORE_H
-#define VMSZMQSOCKETCORE_H
+#ifndef VMSTYPEDRECEIVESOCKET_H
+#define VMSTYPEDRECEIVESOCKET_H
 
 /*============================================================================*/
 /* FORWARD DECLARATIONS														  */
 /*============================================================================*/
-class VmsMsgCodec;
-class IVistaSerializable;
+class VmsSocketFactory;
 
 /*============================================================================*/
 /* INCLUDES																	  */
 /*============================================================================*/
-#include "VmsZMQConfig.h"
-#include <VmsBase/VmsSocketCore.h>
-#include <VistaBase/VistaBaseTypes.h>
+#include "VmsSocketCore.h"
+#include <cassert>
 
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-class VMSZMQAPI VmsZMQSocketCore : public VmsSocketCore
+/**
+  *	A typed receive socket behaves just like its "standard" counterpart the
+  *	VmsReceiveSocket, except that it only communicates a single message type.
+  *	Hence, it does not require an underlying vocabulary, which eases its use
+  * in scenarios where this flexibility is not needed. Note that it is assumed
+  * that a typed receiver will !always! talk to a typed sender. Any other
+  *	setup will result in undefined behavior.
+  */
+template<typename TMsgType>
+class VmsTypedReceiveSocket
 {
 public:
+	friend class VmsSocketFactory;
+
+	virtual ~VmsTypedReceiveSocket();
+
 	/**
-	 *	Create a new core. 
-	 *
-	 *	It is assumed that the socket is pre-configured prior to creating this
-	 *	core, i.e. it is fully bound/connected, already.
-	 *	The core takes ownership of its underlying socket i.e. it closes 
-	 *	it upon its own deletion. The same holds for the given codec.
+	 *	Just put out a message -- which in this implementation has to be
+	 *	of the predefined type.
 	 */
-	VmsZMQSocketCore(void *pZMQSocket, VmsMsgCodec *pCodec);
-	virtual ~VmsZMQSocketCore();
-
-	virtual void Send( IVistaSerializable *pMsg );
-
-	virtual IVistaSerializable * Receive();
-
-	virtual IVistaSerializable *ReceiveNonBlocking(int iWaitTime);
+	TMsgType* Receive();
 
 	/**
-	 * Access the actual ZMQ socket.
+	 * Access the underlying implementation core.
 	 * USE AT YOUR OWN PERIL!
 	 */
-	void *GetZMQSocket();
+	VmsSocketCore *GetCore();
 
 protected:
-	IVistaSerializable *DecodeMessage(VistaType::byte *pBuffer, int iSize);
+	VmsTypedReceiveSocket(VmsSocketCore *pCore);
 
 private:
-	void *m_pSocket;
+	VmsSocketCore *m_pCore;
 };
+
+/*============================================================================*/
+/* IMPLEMENTATION															  */
+/*============================================================================*/
+
+template<typename TMsgType>
+inline VmsTypedReceiveSocket<TMsgType>::VmsTypedReceiveSocket( VmsSocketCore *pCore )
+	: m_pCore(pCore)
+{
+	assert(m_pCore != NULL);
+}
+
+template<typename TMsgType>
+inline VmsTypedReceiveSocket<TMsgType>::~VmsTypedReceiveSocket()
+{
+	delete m_pCore;
+}
+
+template<typename TMsgType>
+inline TMsgType* VmsTypedReceiveSocket<TMsgType>::Receive()
+{
+	return dynamic_cast<TMsgType*>(m_pCore->Receive());
+}
+
+template<typename TMsgType>
+inline VmsSocketCore * VmsTypedReceiveSocket<TMsgType>::GetCore()
+{
+	return m_pCore;
+}
+
+
 
 
 #endif // Include guard.

@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsZMQSocketCore.h			 RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsMarshallingCodec.cpp		 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -27,62 +27,40 @@
 /*============================================================================*/
 /* $Id$ */
 
-#ifndef VMSZMQSOCKETCORE_H
-#define VMSZMQSOCKETCORE_H
-
-/*============================================================================*/
-/* FORWARD DECLARATIONS														  */
-/*============================================================================*/
-class VmsMsgCodec;
-class IVistaSerializable;
-
 /*============================================================================*/
 /* INCLUDES																	  */
 /*============================================================================*/
-#include "VmsZMQConfig.h"
-#include <VmsBase/VmsSocketCore.h>
-#include <VistaBase/VistaBaseTypes.h>
+#include "VmsMarshallingCodec.h"
 
+#include "VmsVocabulary.h"
+
+#include <cassert>
+#include <cstddef>
 /*============================================================================*/
-/* CLASS DEFINITION															  */
+/* IMPLEMENTATION															  */
 /*============================================================================*/
-class VMSZMQAPI VmsZMQSocketCore : public VmsSocketCore
+VmsMarshallingCodec::VmsMarshallingCodec(VmsVocabulary *pVoc)
+	:	m_pVocabulary(pVoc)
 {
-public:
-	/**
-	 *	Create a new core. 
-	 *
-	 *	It is assumed that the socket is pre-configured prior to creating this
-	 *	core, i.e. it is fully bound/connected, already.
-	 *	The core takes ownership of its underlying socket i.e. it closes 
-	 *	it upon its own deletion. The same holds for the given codec.
-	 */
-	VmsZMQSocketCore(void *pZMQSocket, VmsMsgCodec *pCodec);
-	virtual ~VmsZMQSocketCore();
+	assert(pVoc != NULL);
+}
 
-	virtual void Send( IVistaSerializable *pMsg );
+VmsMarshallingCodec::~VmsMarshallingCodec()
+{ }
 
-	virtual IVistaSerializable * Receive();
+int VmsMarshallingCodec::EncodeMsg( IVistaSerializable *pMsg, IVistaSerializer &rSerializer ) const
+{
+	return m_pVocabulary->MarshalMessage(pMsg, rSerializer);
+}
 
-	virtual IVistaSerializable *ReceiveNonBlocking(int iWaitTime);
-
-	/**
-	 * Access the actual ZMQ socket.
-	 * USE AT YOUR OWN PERIL!
-	 */
-	void *GetZMQSocket();
-
-protected:
-	IVistaSerializable *DecodeMessage(VistaType::byte *pBuffer, int iSize);
-
-private:
-	void *m_pSocket;
-};
-
-
-#endif // Include guard.
+IVistaSerializable * VmsMarshallingCodec::DecodeMsg( IVistaDeSerializer &rDeSer ) const
+{
+	return m_pVocabulary->UnMarshalMessage(rDeSer);
+}
 
 
 /*============================================================================*/
 /* END OF FILE																  */
 /*============================================================================*/
+
+

@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsZMQSocketCore.h			 RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsMarshallingCodec.h RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -27,56 +27,61 @@
 /*============================================================================*/
 /* $Id$ */
 
-#ifndef VMSZMQSOCKETCORE_H
-#define VMSZMQSOCKETCORE_H
+#ifndef VMSMARSHALLINGCODEC_H
+#define VMSMARSHALLINGCODEC_H
 
 /*============================================================================*/
 /* FORWARD DECLARATIONS														  */
 /*============================================================================*/
-class VmsMsgCodec;
-class IVistaSerializable;
+class VmsVocabulary;
 
 /*============================================================================*/
 /* INCLUDES																	  */
 /*============================================================================*/
-#include "VmsZMQConfig.h"
-#include <VmsBase/VmsSocketCore.h>
-#include <VistaBase/VistaBaseTypes.h>
+#include "VmsBaseConfig.h"
+#include "VmsMsgCodec.h"
 
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-class VMSZMQAPI VmsZMQSocketCore : public VmsSocketCore
+/**
+ *	A marshalling codec implements the message codec interface by storing
+ *	both, state and object type information in the resulting serial 
+ *	representation. As such, it is the default codec for all communication
+ *	channels where message type information is not implicitely given.
+ *	Essentially, this just just serves as a proxy for the given vocabulary.
+ */
+class VMSBASEAPI VmsMarshallingCodec : public VmsMsgCodec
 {
 public:
 	/**
-	 *	Create a new core. 
+	 *	c'tor for a new codec based on a pre-configured vocabulary. 
 	 *
-	 *	It is assumed that the socket is pre-configured prior to creating this
-	 *	core, i.e. it is fully bound/connected, already.
-	 *	The core takes ownership of its underlying socket i.e. it closes 
-	 *	it upon its own deletion. The same holds for the given codec.
+	 *	The given vocabulary will just be referenced, but ownership remains 
+	 *	with the caller, i.e. it remains the caller's responsibility to clean 
+	 *	this up when done.
 	 */
-	VmsZMQSocketCore(void *pZMQSocket, VmsMsgCodec *pCodec);
-	virtual ~VmsZMQSocketCore();
-
-	virtual void Send( IVistaSerializable *pMsg );
-
-	virtual IVistaSerializable * Receive();
-
-	virtual IVistaSerializable *ReceiveNonBlocking(int iWaitTime);
+	VmsMarshallingCodec(VmsVocabulary *pVoc);
+	virtual ~VmsMarshallingCodec();
 
 	/**
-	 * Access the actual ZMQ socket.
-	 * USE AT YOUR OWN PERIL!
+	 *	Marshall the given message object to the serializer.
 	 */
-	void *GetZMQSocket();
+	 virtual int EncodeMsg( IVistaSerializable *pMsg, IVistaSerializer &rSerializer ) const;
+
+	/**
+	 *	Create a new object by unmarshalling it from the given deserializer.
+	 *
+	 *	Clients should treat this as a new, i.e. they assume responsibility for
+	 *	the returned object.
+	 */
+	virtual IVistaSerializable * DecodeMsg( IVistaDeSerializer &rDeSer ) const;
 
 protected:
-	IVistaSerializable *DecodeMessage(VistaType::byte *pBuffer, int iSize);
 
 private:
-	void *m_pSocket;
+	VmsVocabulary *m_pVocabulary;
+
 };
 
 

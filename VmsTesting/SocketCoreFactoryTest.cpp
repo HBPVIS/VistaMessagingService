@@ -3,6 +3,8 @@
 #include <gtest/gtest.h>
 
 #include <VmsBase/VmsVocabulary.h>
+#include <VmsBase/VmsMarshallingCodec.h>
+
 #include <VmsZMQBindings/VmsZMQSocketCoreFactory.h>
 #include <VmsZMQBindings/VmsZMQSocketCore.h>
 
@@ -47,7 +49,8 @@ protected:
  */
 TEST_F(CoreFactoryTest, CreateVmsSendSocketCore)
 {
-	VmsSocketCore *pCore= m_pFactory->CreateSendCore(STR_INPROC_SOCKET, m_pVocabulary);
+	//NOTE: Every socket core needs its own, distinct codec!
+	VmsSocketCore *pCore= m_pFactory->CreateSendCore(STR_INPROC_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 	ASSERT_TRUE(pCore != NULL);
 	delete pCore;
 }
@@ -57,10 +60,11 @@ TEST_F(CoreFactoryTest, CreateVmsSendSocketCore)
  */
 TEST_F(CoreFactoryTest, CreateVmsReceiveSocketCore)
 {
+	//NOTE: Every socket core needs its own, distinct codec!
 	//need a sending end first in this case...
-	VmsSocketCore *pSendCore = m_pFactory->CreateSendCore(STR_INPROC_SOCKET, m_pVocabulary);
+	VmsSocketCore *pSendCore = m_pFactory->CreateSendCore(STR_INPROC_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 
-	VmsSocketCore *pCore = m_pFactory->CreateReceiveCore(STR_INPROC_SOCKET, m_pVocabulary);
+	VmsSocketCore *pCore = m_pFactory->CreateReceiveCore(STR_INPROC_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 	ASSERT_TRUE(pCore != NULL);
 	
 	delete pCore;
@@ -72,7 +76,8 @@ TEST_F(CoreFactoryTest, CreateVmsReceiveSocketCore)
  */
 TEST_F(CoreFactoryTest, CreateVmsAnswerRequestSocketCore)
 {
-	VmsSocketCore *pCore = m_pFactory->CreateAnswerRequestCore(STR_INPROC_SOCKET, m_pVocabulary);
+	//NOTE: Every socket core needs its own, distinct codec!
+	VmsSocketCore *pCore = m_pFactory->CreateAnswerRequestCore(STR_INPROC_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 	ASSERT_TRUE(pCore != NULL);
 	delete pCore;
 }
@@ -82,10 +87,12 @@ TEST_F(CoreFactoryTest, CreateVmsAnswerRequestSocketCore)
  */
 TEST_F(CoreFactoryTest, CreateVmsSendRequestSocketCore)
 {
+	//NOTE: Every socket core needs its own, distinct codec!
+	
 	//need the server end first in order for this to work
-	VmsSocketCore *pAnswerCore = m_pFactory->CreateAnswerRequestCore(STR_INPROC_SOCKET, m_pVocabulary);
+	VmsSocketCore *pAnswerCore = m_pFactory->CreateAnswerRequestCore(STR_INPROC_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 
-	VmsSocketCore *pCore = m_pFactory->CreateSendRequestCore(STR_INPROC_SOCKET, m_pVocabulary);
+	VmsSocketCore *pCore = m_pFactory->CreateSendRequestCore(STR_INPROC_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 	ASSERT_TRUE(pCore != NULL);
 	
 	delete pCore;
@@ -97,7 +104,7 @@ TEST_F(CoreFactoryTest, CreateVmsSendRequestSocketCore)
  */
 TEST_F(CoreFactoryTest, CheckInvalidSocketAddress)
 {
-	VmsSocketCore *pCore = m_pFactory->CreateSendCore(STR_INVALID_SOCKET, m_pVocabulary);
+	VmsSocketCore *pCore = m_pFactory->CreateSendCore(STR_INVALID_SOCKET, new VmsMarshallingCodec(m_pVocabulary));
 	ASSERT_TRUE(pCore == NULL);
 }
 

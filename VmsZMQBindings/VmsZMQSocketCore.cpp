@@ -32,7 +32,7 @@
 /*============================================================================*/
 #include "VmsZMQSocketCore.h"
 
-#include <VmsBase/VmsVocabulary.h>
+#include <VmsBase/VmsMsgCodec.h>
 
 #include <VistaInterProcComm/Connections/VistaByteBufferSerializer.h>
 #include <VistaInterProcComm/Connections/VistaByteBufferDeSerializer.h>
@@ -47,9 +47,9 @@
 /*============================================================================*/
 /* IMPLEMENTATION															  */
 /*============================================================================*/
-VmsZMQSocketCore::VmsZMQSocketCore(void *pZMQSocket, VmsVocabulary *pVocabulary)
+VmsZMQSocketCore::VmsZMQSocketCore(void *pZMQSocket, VmsMsgCodec *pCodec)
 	:	m_pSocket(pZMQSocket),
-		VmsSocketCore(pVocabulary)	
+		VmsSocketCore(pCodec)	
 {
 
 }
@@ -62,13 +62,14 @@ VmsZMQSocketCore::~VmsZMQSocketCore()
 
 void VmsZMQSocketCore::Send( IVistaSerializable *pMsg )
 {
-	const VmsVocabulary *pVoc = this->GetVocabulary();
+	const VmsMsgCodec *pCodec = this->GetCodec();
 
 	VistaByteBufferSerializer oSer;
-	pVoc->MarshalMessage(pMsg, oSer);
+	int iret = pCodec->EncodeMsg(pMsg, oSer);
+	assert(iret > 0);
 
 	zmq_msg_t oRawMsg;
-	int iret = zmq_msg_init_size(&oRawMsg, oSer.GetBufferSize());
+	iret = zmq_msg_init_size(&oRawMsg, oSer.GetBufferSize());
 	assert(iret == 0);
 
 	memcpy(zmq_msg_data(&oRawMsg), oSer.GetBuffer(), oSer.GetBufferSize());
@@ -139,10 +140,10 @@ IVistaSerializable * VmsZMQSocketCore::ReceiveNonBlocking( int iWaitTime )
 
 IVistaSerializable * VmsZMQSocketCore::DecodeMessage( VistaType::byte *pBuffer, int iSize )
 {
-	const VmsVocabulary *pVoc = this->GetVocabulary();
+	const VmsMsgCodec *pCodec = this->GetCodec();
 	VistaByteBufferDeSerializer oDeSer;
 	oDeSer.SetBuffer(pBuffer, iSize);
-	return pVoc->UnMarshalMessage(oDeSer);
+	return pCodec->DecodeMsg(oDeSer);
 }
 
 void * VmsZMQSocketCore::GetZMQSocket()

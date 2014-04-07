@@ -7,8 +7,12 @@ set( DirFiles
 	VmsAnswerRequestSocket.cpp
 	VmsAnswerRequestSocket.h
 	VmsBaseConfig.h
+	VmsMarshallingCodec.cpp
+	VmsMarshallingCodec.h
+	VmsMsgCodec.h
 	VmsReceiveSocket.cpp
 	VmsReceiveSocket.h
+	VmsSerializingCodec.h
 	VmsSendRequestSocket.cpp
 	VmsSendRequestSocket.h
 	VmsSendSocket.cpp
@@ -21,6 +25,8 @@ set( DirFiles
 	VmsSocketDemux.h
 	VmsSocketFactory.cpp
 	VmsSocketFactory.h
+	VmsTypedReceiveSocket.h
+	VmsTypedSendSocket.h
 	VmsVocabulary.cpp
 	VmsVocabulary.h
 	_SourceFiles.cmake

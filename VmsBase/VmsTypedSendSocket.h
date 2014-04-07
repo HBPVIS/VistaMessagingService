@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsZMQSocketCore.h			 RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsTypedSendSocket.h		 RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -27,57 +27,85 @@
 /*============================================================================*/
 /* $Id$ */
 
-#ifndef VMSZMQSOCKETCORE_H
-#define VMSZMQSOCKETCORE_H
+#ifndef VMSTYPEDSENDSOCKET_H
+#define VMSTYPEDSENDSOCKET_H
 
 /*============================================================================*/
 /* FORWARD DECLARATIONS														  */
 /*============================================================================*/
-class VmsMsgCodec;
-class IVistaSerializable;
+class VmsSocketFactory;
 
 /*============================================================================*/
 /* INCLUDES																	  */
 /*============================================================================*/
-#include "VmsZMQConfig.h"
-#include <VmsBase/VmsSocketCore.h>
-#include <VistaBase/VistaBaseTypes.h>
+#include "VmsSocketCore.h"
 
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-class VMSZMQAPI VmsZMQSocketCore : public VmsSocketCore
+/**
+ *	The typed send socket behaves just like its cousin the "standard" send
+ *	socket. The only difference is that it communicates by means of exactly 
+ *	one message type. This eases its use in scenarios where no multi-
+ *	message vocabulary is required. Note, though, that it is assumed that
+ *	this socket !always" talks to a typed receive socket on the other end.
+ *	Any different setup will result in undefined behavior.
+ */
+template<class TMsgType>
+class VmsTypedSendSocket
 {
 public:
+	friend class VmsSocketFactory;
+
+	~VmsTypedSendSocket();
+
 	/**
-	 *	Create a new core. 
-	 *
-	 *	It is assumed that the socket is pre-configured prior to creating this
-	 *	core, i.e. it is fully bound/connected, already.
-	 *	The core takes ownership of its underlying socket i.e. it closes 
-	 *	it upon its own deletion. The same holds for the given codec.
+	 * just send out a message of given type "fire-and-forget" style
 	 */
-	VmsZMQSocketCore(void *pZMQSocket, VmsMsgCodec *pCodec);
-	virtual ~VmsZMQSocketCore();
-
-	virtual void Send( IVistaSerializable *pMsg );
-
-	virtual IVistaSerializable * Receive();
-
-	virtual IVistaSerializable *ReceiveNonBlocking(int iWaitTime);
+	void Send(TMsgType *pMsg);
 
 	/**
-	 * Access the actual ZMQ socket.
+	 * Access the underlying implementation core.
 	 * USE AT YOUR OWN PERIL!
 	 */
-	void *GetZMQSocket();
+	VmsSocketCore *GetCore();
 
 protected:
-	IVistaSerializable *DecodeMessage(VistaType::byte *pBuffer, int iSize);
+	VmsTypedSendSocket(VmsSocketCore *pCore);
 
 private:
-	void *m_pSocket;
+	VmsSocketCore *m_pCore;
 };
+
+
+/*============================================================================*/
+/* IMPLEMENTATION															  */
+/*============================================================================*/
+template<class TMsgType>
+inline VmsTypedSendSocket<TMsgType>::VmsTypedSendSocket( VmsSocketCore *pCore )
+	: m_pCore(pCore)
+{
+
+}
+
+template<class TMsgType>
+inline VmsTypedSendSocket<TMsgType>::~VmsTypedSendSocket()
+{
+	delete m_pCore;
+}
+
+template<class TMsgType>
+inline void VmsTypedSendSocket<TMsgType>::Send( TMsgType *pMsg )
+{
+	m_pCore->Send(pMsg);
+}
+
+
+template<class TMsgType>
+inline VmsSocketCore * VmsTypedSendSocket<TMsgType>::GetCore()
+{
+	return m_pCore;
+}
 
 
 #endif // Include guard.

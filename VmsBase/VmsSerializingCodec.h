@@ -5,7 +5,7 @@
 /*                                             .                              */
 /*                                               RRRR WW  WW   WTTTTTTHH  HH  */
 /*                                               RR RR WW WWW  W  TT  HH  HH  */
-/*      Header   :	VmsZMQSocketCore.h			 RRRR   WWWWWWWW  TT  HHHHHH  */
+/*      Header   :	VmsSerializingCodec.h RRRR   WWWWWWWW  TT  HHHHHH  */
 /*                                               RR RR   WWW WWW  TT  HH  HH  */
 /*      Module   :  			                 RR  R    WW  WW  TT  HH  HH  */
 /*                                                                            */
@@ -27,58 +27,105 @@
 /*============================================================================*/
 /* $Id$ */
 
-#ifndef VMSZMQSOCKETCORE_H
-#define VMSZMQSOCKETCORE_H
+#ifndef VMSSERIALIZINGCODEC_H
+#define VMSSERIALIZINGCODEC_H
 
 /*============================================================================*/
 /* FORWARD DECLARATIONS														  */
 /*============================================================================*/
-class VmsMsgCodec;
-class IVistaSerializable;
+
 
 /*============================================================================*/
 /* INCLUDES																	  */
 /*============================================================================*/
-#include "VmsZMQConfig.h"
-#include <VmsBase/VmsSocketCore.h>
-#include <VistaBase/VistaBaseTypes.h>
+#include "VmsMsgCodec.h"
 
+#include <VistaAspects/VistaSerializer.h>
+#include <VistaAspects/VistaDeSerializer.h>
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
-class VMSZMQAPI VmsZMQSocketCore : public VmsSocketCore
+/**
+ *  This codec just stores/retrieves an object's state information. Type 
+ *	information is statically stored via templating, i.e. the type of a 
+ *	received message is imlicitely defined by the template parameter.
+ *
+ *	In order for this to work, two basic assumptions are made:
+ *	1)	TMsgType implements IVistaSerializable
+ *	2)	TMsgType features a local public type TCreator which can be used
+ *		to create (w/o additional params) a new object of TMsgType.
+ */
+template<class TMsgType> 
+class VmsSerializingCodec : public VmsMsgCodec
 {
 public:
-	/**
-	 *	Create a new core. 
-	 *
-	 *	It is assumed that the socket is pre-configured prior to creating this
-	 *	core, i.e. it is fully bound/connected, already.
-	 *	The core takes ownership of its underlying socket i.e. it closes 
-	 *	it upon its own deletion. The same holds for the given codec.
-	 */
-	VmsZMQSocketCore(void *pZMQSocket, VmsMsgCodec *pCodec);
-	virtual ~VmsZMQSocketCore();
-
-	virtual void Send( IVistaSerializable *pMsg );
-
-	virtual IVistaSerializable * Receive();
-
-	virtual IVistaSerializable *ReceiveNonBlocking(int iWaitTime);
+	typedef typename TMsgType::TCreator TMsgCreator;
 
 	/**
-	 * Access the actual ZMQ socket.
-	 * USE AT YOUR OWN PERIL!
+	 *	Create a new codec given the creator for the specific message type.
+	 *	Note that this object will take ownership of the creator, i.e.
+	 *	it will delete it after use. Hence, clients MUST NOT delete it
+	 *	themselves.
 	 */
-	void *GetZMQSocket();
+	VmsSerializingCodec(TMsgCreator *pCreator);
+	virtual ~VmsSerializingCodec();
 
-protected:
-	IVistaSerializable *DecodeMessage(VistaType::byte *pBuffer, int iSize);
+	/**
+	 *	Store stuff by just using the IVistaSerializer interface.
+	 */
+	virtual int EncodeMsg( IVistaSerializable *pMsg, IVistaSerializer &rSerializer ) const;
+	
+	/**
+	 *	Retrieve stuff by just using the IVistaSerializer interface.
+	 *	A new object will be created using the creator passed upon construction.
+	 *	Clients should treat this as a new, i.e. they assume responsibility for
+	 *	the returned object.
+	 */
+	virtual IVistaSerializable * DecodeMsg( IVistaDeSerializer &rDeSer ) const;
 
 private:
-	void *m_pSocket;
+	TMsgCreator *m_pCreator;
 };
 
+template<class TMsgType>
+inline VmsSerializingCodec<TMsgType>::VmsSerializingCodec( TMsgCreator *pCreator )
+	: m_pCreator(pCreator)
+{
+
+}
+
+template<class TMsgType>
+VmsSerializingCodec<TMsgType>::~VmsSerializingCodec()
+{
+	delete m_pCreator;
+}
+
+template<class TMsgType>
+int VmsSerializingCodec<TMsgType>::EncodeMsg( IVistaSerializable *pMsg, IVistaSerializer &rSerializer ) const
+{
+	return pMsg->Serialize(rSerializer);
+}
+
+template<class TMsgType>
+IVistaSerializable * VmsSerializingCodec<TMsgType>::DecodeMsg( IVistaDeSerializer &rDeSer ) const
+{
+	TMsgType *pMsg = dynamic_cast<TMsgType*>(m_pCreator->CreateInstance());
+	
+	if(pMsg == NULL)
+		return NULL;
+	
+	if(pMsg->DeSerialize(rDeSer) < 0)
+	{
+		m_pCreator->DestroyInstance(pMsg);
+		return NULL;
+	}
+	return pMsg;
+}
+/*============================================================================*/
+/* IMPLEMENTATION															  */
+/*============================================================================*/
+	
+	
 
 #endif // Include guard.
 

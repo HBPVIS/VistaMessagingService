@@ -36,8 +36,7 @@
 #include "VmsReceiveSocket.h"
 #include "VmsSendRequestSocket.h"
 #include "VmsAnswerRequestSocket.h"
-
-#include "VmsSocketCoreFactory.h"
+#include "VmsMarshallingCodec.h"
 
 #include <VistaBase/VistaStreamUtils.h>
 
@@ -87,7 +86,11 @@ VmsSendSocket * VmsSocketFactory::CreateSendSocket(const std::string &strAddress
 	if(pFactory == NULL)
 		return NULL;
 
-	VmsSocketCore *pCore = pFactory->CreateSendCore(strAddress, pVocabulary);
+	//wrap vocabulary in a marshalling codec which we keep as the default for this
+	//socket type for now...
+	VmsMarshallingCodec *pCodec = new VmsMarshallingCodec(pVocabulary);
+
+	VmsSocketCore *pCore = pFactory->CreateSendCore(strAddress, pCodec);
 	if(pCore == NULL)
 		return NULL;
 	
@@ -101,7 +104,11 @@ VmsReceiveSocket * VmsSocketFactory::CreateReceiveSocket(const std::string &strA
 	if(pFactory == NULL)
 		return NULL;
 
-	VmsSocketCore *pCore = pFactory->CreateReceiveCore(strAddress, pVocabulary);
+	//wrap vocabulary in a marshalling codec which we keep as the default for this
+	//socket type for now...
+	VmsMarshallingCodec *pCodec = new VmsMarshallingCodec(pVocabulary);
+
+	VmsSocketCore *pCore = pFactory->CreateReceiveCore(strAddress, pCodec);
 	if(pCore == NULL)
 		return NULL;
 
@@ -115,7 +122,11 @@ VmsSendRequestSocket * VmsSocketFactory::CreateSendRequestSocket(const std::stri
 	if(pFactory == NULL)
 		return NULL;
 
-	VmsSocketCore *pCore = pFactory->CreateSendRequestCore(strAddress, pVocabulary);
+	//wrap vocabulary in a marshalling codec which we keep as the default for this
+	//socket type for now...
+	VmsMarshallingCodec *pCodec = new VmsMarshallingCodec(pVocabulary);
+
+	VmsSocketCore *pCore = pFactory->CreateSendRequestCore(strAddress, pCodec);
 	if(pCore == NULL)
 		return NULL;
 
@@ -129,7 +140,11 @@ VmsAnswerRequestSocket * VmsSocketFactory::CreateAnswerRequestSocket(const std::
 	if(pFactory == NULL)
 		return NULL;
 
-	VmsSocketCore *pCore = pFactory->CreateAnswerRequestCore(strAddress, pVocabulary);
+	//wrap vocabulary in a marshalling codec which we keep as the default for this
+	//socket type for now...
+	VmsMarshallingCodec *pCodec = new VmsMarshallingCodec(pVocabulary);
+
+	VmsSocketCore *pCore = pFactory->CreateAnswerRequestCore(strAddress, pCodec);
 	if(pCore == NULL)
 		return NULL;
 

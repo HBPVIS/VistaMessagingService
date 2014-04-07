@@ -18,6 +18,16 @@ add_dependencies( VocabularyTest VistaBase VistaAspects VistaTools VistaInterPro
 ###
 
 ####
+# configure test for common message codecs
+####
+vista_configure_test( MsgCodecTest MsgCodecTest.cpp)
+target_link_libraries( MsgCodecTest
+	${VISTA_USE_PACKAGE_LIBRARIES}
+)
+add_dependencies( MsgCodecTest VistaBase VistaAspects VistaTools VistaInterProcComm VmsBase )
+###
+
+####
 # configure test for the socket core factory
 ####
 vista_configure_test( SocketCoreFactoryTest SocketCoreFactoryTest.cpp)
@@ -68,6 +78,17 @@ target_link_libraries( SendReceiveSocketTest
 )
 add_dependencies( SendReceiveSocketTest VistaBase VistaAspects VistaTools VistaInterProcComm VmsBase VmsZMQBindings)
 ###
+
+####
+# configure test for typed fire-and-forget sockets i.e. the ones with fixed message type
+####
+vista_configure_test( TypedSendReceiveSocketTest TypedSendReceiveSocketTest.cpp TestingUtils.h)
+target_link_libraries( TypedSendReceiveSocketTest
+	${VISTA_USE_PACKAGE_LIBRARIES}
+)
+add_dependencies( TypedSendReceiveSocketTest VistaBase VistaAspects VistaTools VistaInterProcComm VmsBase VmsZMQBindings)
+###
+
 
 ####
 # configure test for the socket demultiplexer

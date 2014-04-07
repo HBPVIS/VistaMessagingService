@@ -84,25 +84,25 @@ public:
 	 * create & configure zmq specific socket core for VmsSendSocket
 	 */
 	virtual VmsSocketCore * CreateSendCore(const std::string& strAddress, 
-										   VmsVocabulary *pVocabulary);
+										   VmsMsgCodec *pCodec);
 
 	/**
 	 * create & configure zmq specific socket core for VmsReceiveSocket
 	 */
 	virtual VmsSocketCore * CreateReceiveCore(const std::string& strAddress,
-										      VmsVocabulary *pVocabulary);
+										      VmsMsgCodec *pCodec);
 
 	/**
 	 * create & configure zmq specific socket core for VmsSendRequestSocket
 	 */
 	virtual VmsSocketCore * CreateSendRequestCore(const std::string& strAddress, 
-												  VmsVocabulary *pVocabulary);
+												  VmsMsgCodec *pCodec);
 
 	/**
 	 * create & configure zmq specific socket core for VmsAnswerRequestSocket
 	 */
 	virtual VmsSocketCore * CreateAnswerRequestCore(const std::string& strAddress, 
-													VmsVocabulary *pVocabulary);
+													VmsMsgCodec *pCodec);
 
 	/**
 	 *	Convenience method registering the prefixes tcp, udp, and inproc 

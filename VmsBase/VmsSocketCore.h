@@ -33,7 +33,7 @@
 /*============================================================================*/
 /* FORWARD DECLARATIONS														  */
 /*============================================================================*/
-class VmsVocabulary;
+class VmsMsgCodec;
 class IVistaSerializable;
 /*============================================================================*/
 /* INCLUDES																	  */
@@ -49,7 +49,14 @@ class IVistaSerializable;
 class VMSBASEAPI VmsSocketCore
 {
 public:
-	VmsSocketCore(VmsVocabulary *pVocabulary);
+	/**
+	 * Create a new socket core using the given codec for encoding/decoding
+	 * messages into/from byte streams.
+	 *
+	 * The core will take ownership of the codec, i.e. it will delete the 
+	 * codec upon its own destruction.
+	 */
+	VmsSocketCore(VmsMsgCodec *pCodec);
 	virtual ~VmsSocketCore();
 
 	/**
@@ -80,10 +87,10 @@ public:
 	virtual IVistaSerializable *ReceiveNonBlocking(int iWaitTime) = 0;
 
 protected:
-	const VmsVocabulary *GetVocabulary() const;
+	const VmsMsgCodec *GetCodec() const;
 
 private:
-	VmsVocabulary *m_pVocabulary;
+	VmsMsgCodec *m_pCodec;
 };
 
 

@@ -56,7 +56,7 @@ VmsZMQSocketCoreFactory::~VmsZMQSocketCoreFactory()
 	assert(iret == 0);
 }
 
-VmsSocketCore * VmsZMQSocketCoreFactory::CreateSendCore( const std::string& strAddress, VmsVocabulary *pVocabulary )
+VmsSocketCore * VmsZMQSocketCoreFactory::CreateSendCore( const std::string& strAddress, VmsMsgCodec *pCodec )
 {
 	void *pZMQSocket = zmq_socket(m_pContext, ZMQ_PUB);
 
@@ -74,10 +74,10 @@ VmsSocketCore * VmsZMQSocketCoreFactory::CreateSendCore( const std::string& strA
 		return NULL;
 	}
 
-	return new VmsZMQSocketCore(pZMQSocket, pVocabulary);
+	return new VmsZMQSocketCore(pZMQSocket, pCodec);
 }
 
-VmsSocketCore * VmsZMQSocketCoreFactory::CreateReceiveCore( const std::string& strAddress, VmsVocabulary *pVocabulary )
+VmsSocketCore * VmsZMQSocketCoreFactory::CreateReceiveCore( const std::string& strAddress, VmsMsgCodec *pCodec )
 {
 	void *pZMQSocket = zmq_socket(m_pContext, ZMQ_SUB);
 
@@ -103,11 +103,11 @@ VmsSocketCore * VmsZMQSocketCoreFactory::CreateReceiveCore( const std::string& s
 		return NULL;
 	}
 
-	return new VmsZMQSocketCore(pZMQSocket, pVocabulary);	
+	return new VmsZMQSocketCore(pZMQSocket, pCodec);
 }
 
 
-VmsSocketCore * VmsZMQSocketCoreFactory::CreateSendRequestCore( const std::string& strAddress, VmsVocabulary *pVocabulary )
+VmsSocketCore * VmsZMQSocketCoreFactory::CreateSendRequestCore( const std::string& strAddress, VmsMsgCodec *pCodec )
 {
 	void *pZMQSocket = zmq_socket(m_pContext, ZMQ_REQ);
 
@@ -125,10 +125,10 @@ VmsSocketCore * VmsZMQSocketCoreFactory::CreateSendRequestCore( const std::strin
 		return NULL;
 	}
 
-	return new VmsZMQSocketCore(pZMQSocket, pVocabulary);
+	return new VmsZMQSocketCore(pZMQSocket, pCodec);
 }
 
-VmsSocketCore * VmsZMQSocketCoreFactory::CreateAnswerRequestCore( const std::string& strAddress, VmsVocabulary *pVocabulary )
+VmsSocketCore * VmsZMQSocketCoreFactory::CreateAnswerRequestCore( const std::string& strAddress, VmsMsgCodec *pCodec )
 {
 	void *pZMQSocket = zmq_socket(m_pContext, ZMQ_REP);
 
@@ -146,7 +146,7 @@ VmsSocketCore * VmsZMQSocketCoreFactory::CreateAnswerRequestCore( const std::str
 		return NULL;
 	}
 
-	return new VmsZMQSocketCore(pZMQSocket, pVocabulary);
+	return new VmsZMQSocketCore(pZMQSocket, pCodec);
 }
 
 void VmsZMQSocketCoreFactory::RegisterDefaultZMQProtocols( VmsSocketFactory *pFactory )
