@@ -55,7 +55,7 @@ private:
 TEST_F(TypedSendReceiveSocketTest, TestConnection)
 {
 	VmsTypedSendSocket<TestMsg> *pSender = m_pSocketFactory->CreateTypedSendSocket<TestMsg>(STR_ADDRESS);
-	VmsTypedReceiveSocket<TestMsg> *pReceiver = m_pSocketFactory->CreateTypedReceiveSocket<TestMsg>(STR_ADDRESS);
+	VmsTypedReceiveSocket<TestMsg> *pReceiver = m_pSocketFactory->CreateTypedReceiveSocket<TestMsg>(STR_ADDRESS, new TestMsg::TCreator);
 
 	TestMsg oMsg("Hello World!");
 	pSender->Send(&oMsg);

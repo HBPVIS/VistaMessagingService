@@ -47,6 +47,14 @@ class VmsMsgCodec;
 /*============================================================================*/
 /**
  *	Interface for creating protocol-specific socket cores.
+ *
+ *	Specific implementations create & configure the underlying transport
+ *	mechanisms and thus hide this boiler plate code from clients.
+ *
+ *	Note that the underlying transport protocol/implementation may or may
+ *	not require that sockets which are supposed to communicate with each
+ *	other are created via the same factory. See implementation documentation
+ *	for details.
  */
 class VMSBASEAPI VmsSocketCoreFactory
 {
@@ -58,6 +66,9 @@ public:
 	 *
 	 *	In addition to mere creation, this will bind the sender 
 	 *	to the given address.
+	 *
+	 *	Ownership for the given will be passed to the core, i.e. the client
+	 *	is not supposed to delete it after this call.
 	 */
 	virtual VmsSocketCore *CreateSendCore(const std::string& strAddress, 
 										  VmsMsgCodec *pCodec) = 0;
@@ -66,6 +77,9 @@ public:
 	 *
 	 *	In addition to mere creation, this will connect the receiver
 	 *	to a sender at the given address.
+	 *
+	 *	Ownership for the given will be passed to the core, i.e. the client
+	 *	is not supposed to delete it after this call.
 	 */
 	virtual VmsSocketCore *CreateReceiveCore(const std::string& strAddress, 
 											 VmsMsgCodec *pCodec) = 0;
@@ -74,6 +88,9 @@ public:
 	 *
 	 *	In addition to mere creation, this will connect the sender 
 	 *	to a server at the given address.
+	 *
+	 *	Ownership for the given will be passed to the core, i.e. the client
+	 *	is not supposed to delete it after this call.
 	 */
 	virtual VmsSocketCore *CreateSendRequestCore(const std::string& strAddress, 
 												 VmsMsgCodec *pCodec) = 0;
@@ -82,7 +99,10 @@ public:
 	 *
 	 *	In addition to mere creation, this will bind the server
 	 *	to the given address.
-	 */
+	 *
+	 *	Ownership for the given will be passed to the core, i.e. the client
+	 *	is not supposed to delete it after this call.
+	 s*/
 	virtual VmsSocketCore *CreateAnswerRequestCore(const std::string& strAddress, 
 												   VmsMsgCodec *pCodec) = 0;
 

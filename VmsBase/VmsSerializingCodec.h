@@ -42,13 +42,15 @@
 
 #include <VistaAspects/VistaSerializer.h>
 #include <VistaAspects/VistaDeSerializer.h>
+
+#include <cassert>
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
 /**
  *  This codec just stores/retrieves an object's state information. Type 
  *	information is statically stored via templating, i.e. the type of a 
- *	received message is imlicitely defined by the template parameter.
+ *	received message is implicitly defined by the template parameter.
  *
  *	In order for this to work, two basic assumptions are made:
  *	1)	TMsgType implements IVistaSerializable
@@ -63,9 +65,15 @@ public:
 
 	/**
 	 *	Create a new codec given the creator for the specific message type.
+	 *	NULL is a valid input value for codec instances that will ONLY
+	 *	be used on the sending end. However, be careful about this, because
+	 *	trying to read from a codec with a NULL-initialized creator WILL
+	 *	CRASH!
+	 *
 	 *	Note that this object will take ownership of the creator, i.e.
 	 *	it will delete it after use. Hence, clients MUST NOT delete it
-	 *	themselves.
+	 *	themselves. Moreover, it is a bad idea to share the same creator among
+	 *	instances!
 	 */
 	VmsSerializingCodec(TMsgCreator *pCreator);
 	virtual ~VmsSerializingCodec();
@@ -109,6 +117,8 @@ int VmsSerializingCodec<TMsgType>::EncodeMsg( IVistaSerializable *pMsg, IVistaSe
 template<class TMsgType>
 IVistaSerializable * VmsSerializingCodec<TMsgType>::DecodeMsg( IVistaDeSerializer &rDeSer ) const
 {
+	assert(m_pCreator != NULL);
+
 	TMsgType *pMsg = dynamic_cast<TMsgType*>(m_pCreator->CreateInstance());
 	
 	if(pMsg == NULL)

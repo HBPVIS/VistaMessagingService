@@ -59,7 +59,7 @@ class VmsSocketCoreFactory;
 /*============================================================================*/
 /**
  *	The SocketFactory is used to create ready-to-use sockets without the hassle
- *	of going through the configuration process manually.
+ *	of manually going through the configuration process.
  * 
  *	It encapsulates the handling of different transport protocols which are
  *	chosen based on the input strAddress argument.
@@ -118,16 +118,28 @@ public:
 										  VmsVocabulary *pVocabulary);
 
 	/**
+	 *	Create a typed send socket. Semantically, this is essentially identical
+	 *	to VmsSendSocket. It does not rely on a vocabulary, though. Instead, a
+	 *	typed socket only communicates via a single message type that has to 
+	 *	be fixed at compile time. It is assumed that this socket is tied to a 
+	 *	VmsTypedReceiveSocket of the same message type.
 	 *
 	 */
 	template<typename TMsgType>
 	VmsTypedSendSocket<TMsgType> *CreateTypedSendSocket(const std::string &strAddress);
 
 	/**
-	 * 
-	 */
-	template<typename TMsgType>
-	VmsTypedReceiveSocket<TMsgType> *CreateTypedReceiveSocket(const std::string &strAddress);
+	*	Create a typed receive socket. Semantically, this is essentially identical
+	*	to VmsReceiveSocket. It does not rely on a vocabulary, though. Instead, a
+	*	typed socket only communicates via a single message type that has to 
+	*	be fixed at compile time. It is assumed that this socket is tied to a 
+	*	VmsTypedSendSocket of the same message type.
+	*	The created socket will take ownership of the creator that is passed to 
+	*	this call, so DO NOT DELETE it and DO NOT SHARE it with other sockets!
+	*	It is assumed that TCreator is of type TMsgType::TCreator.
+	*/
+	template<typename TMsgType, typename TCreator>
+	VmsTypedReceiveSocket<TMsgType> *CreateTypedReceiveSocket(const std::string &strAddress, TCreator *pCreator);
 
 	/**
 	 *	Create a VmsSendRequestSocket and connect it to a 
@@ -172,7 +184,7 @@ private:
 /* IMPLEMENTATION															  */
 /*============================================================================*/
 template<typename TMsgType>
-inline VmsTypedSendSocket<TMsgType>* VmsSocketFactory::CreateTypedSendSocket( const std::string &strAddress )
+inline VmsTypedSendSocket<TMsgType>* VmsSocketFactory::CreateTypedSendSocket( const std::string &strAddress)
 {
 	VmsSocketCoreFactory *pFactory = this->GetCoreFactory(strAddress);
 	if(pFactory == NULL)
@@ -180,8 +192,9 @@ inline VmsTypedSendSocket<TMsgType>* VmsSocketFactory::CreateTypedSendSocket( co
 
 	//create a serializing codec as default for this socket type for now.
 	//since the msg type is implicit, we can settle for this one in favor of
-	//the marshalling version.
-	VmsSerializingCodec<TMsgType> *pCodec = new VmsSerializingCodec<TMsgType>(new TMsgType::TCreator);
+	//the marshalling version. We pass in NULL here because this socket
+	//will only be sending!
+	VmsSerializingCodec<TMsgType> *pCodec = new VmsSerializingCodec<TMsgType>(NULL);
 
 	VmsSocketCore *pCore = pFactory->CreateSendCore(strAddress, pCodec);
 	if(pCore == NULL)
@@ -190,8 +203,8 @@ inline VmsTypedSendSocket<TMsgType>* VmsSocketFactory::CreateTypedSendSocket( co
 	return new VmsTypedSendSocket<TMsgType>(pCore);
 }
 
-template<typename TMsgType>
-inline VmsTypedReceiveSocket<TMsgType>* VmsSocketFactory::CreateTypedReceiveSocket( const std::string &strAddress )
+template<typename TMsgType, typename TCreator>
+inline VmsTypedReceiveSocket<TMsgType>* VmsSocketFactory::CreateTypedReceiveSocket( const std::string &strAddress, TCreator *pCreator)
 {
 	VmsSocketCoreFactory *pFactory = this->GetCoreFactory(strAddress);
 	if(pFactory == NULL)
@@ -200,7 +213,7 @@ inline VmsTypedReceiveSocket<TMsgType>* VmsSocketFactory::CreateTypedReceiveSock
 	//create a serializing codec as default for this socket type for now.
 	//since the msg type is implicit, we can settle for this one in favor of
 	//the marshalling version.
-	VmsSerializingCodec<TMsgType> *pCodec = new VmsSerializingCodec<TMsgType>(new TMsgType::TCreator);
+	VmsSerializingCodec<TMsgType> *pCodec = new VmsSerializingCodec<TMsgType>(pCreator);
 
 	VmsSocketCore *pCore = pFactory->CreateReceiveCore(strAddress, pCodec);
 	if(pCore == NULL)

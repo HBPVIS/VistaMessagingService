@@ -55,7 +55,12 @@ template<class T> class IVistaCreator;
  * very same VmsVocabulary instance. In the more likely case of a distributed
  * system, where messages are exchanged across process boundaries, this is
  * ensured by <bf>registering the messages in the very same order</bf> on 
- * both systems.
+ * both systems. 
+ * In any case, it is the client's responsibility that the message vocabularies
+ * between sender and receiver are identical. If this is not the case, it will
+ * result in weird, very hard-to-identify runtime errors. So if you experience
+ * any of these during message sending/receiving, a careful look at the 
+ * underlying vocabularies is STRONGLY RECOMMENDED!
  */
 class VMSBASEAPI VmsVocabulary
 {
