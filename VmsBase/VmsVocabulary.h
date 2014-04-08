@@ -86,9 +86,19 @@ public:
 									  IVistaCreator<IVistaSerializable> *pCreator);
 
 	/**
-	 * Check if pType is "spoken" by this vocabulary 
+	 *	Check if pType is "spoken" by this vocabulary 
 	 */
 	bool HasMessage(IVistaSerializable *pType) const;
+
+	/**
+	 *	Just return the number of messages registerd in this vocabulary
+	 */
+	size_t GetNumMessages() const;
+
+	/**
+	 *	clear the complete vocabulary and start config from scratch
+	 */
+	void Clear();
 
 	/**
 	 * Marshall a given message, i.e. pack it up in the given serializer,

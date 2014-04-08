@@ -58,6 +58,16 @@ bool VmsVocabulary::HasMessage( IVistaSerializable *pType ) const
 	return (m_pFactory->GetGlobalTypeId(pType) >= 0);
 }
 
+size_t VmsVocabulary::GetNumMessages() const
+{
+	return m_pFactory->GetNumTypes();
+}
+
+void VmsVocabulary::Clear()
+{
+	m_pFactory->Clear();
+}
+
 int VmsVocabulary::MarshalMessage( IVistaSerializable* pMsg, IVistaSerializer &rSerializer ) const 
 {
 	return m_pFactory->MarshalObject(pMsg, rSerializer);
@@ -67,6 +77,8 @@ IVistaSerializable* VmsVocabulary::UnMarshalMessage( IVistaDeSerializer &rDeSeri
 {
 	return m_pFactory->UnmarshalObject(rDeSerializer);
 }
+
+
 
 
 
