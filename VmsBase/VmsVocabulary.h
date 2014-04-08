@@ -44,6 +44,7 @@ template<class T> class IVistaCreator;
 #include "VmsBaseConfig.h"
 
 #include <VistaBase/VistaBaseTypes.h>
+#include <cstddef>
 /*============================================================================*/
 /* CLASS DEFINITION															  */
 /*============================================================================*/
