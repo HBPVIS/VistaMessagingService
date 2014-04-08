@@ -40,6 +40,7 @@
 /*============================================================================*/
 #include "VmsMsgCodec.h"
 
+#include <VistaAspects/VistaSerializable.h>
 #include <VistaAspects/VistaSerializer.h>
 #include <VistaAspects/VistaDeSerializer.h>
 
