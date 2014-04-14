@@ -67,6 +67,11 @@ public:
 	TMsgType* Receive();
 
 	/**
+	 *	Try to receive a message within the given timeout
+	 */
+	TMsgType* TryReceive(int iWaitMilliSecs);
+
+	/**
 	 * Access the underlying implementation core.
 	 * USE AT YOUR OWN PERIL!
 	 */
@@ -100,6 +105,12 @@ template<typename TMsgType>
 inline TMsgType* VmsTypedReceiveSocket<TMsgType>::Receive()
 {
 	return dynamic_cast<TMsgType*>(m_pCore->Receive());
+}
+
+template<typename TMsgType>
+inline TMsgType* VmsTypedReceiveSocket<TMsgType>::TryReceive(int iWaitMilliSecs)
+{
+	return dynamic_cast<TMsgType*>(m_pCore->ReceiveNonBlocking(iWaitMilliSecs));
 }
 
 template<typename TMsgType>
