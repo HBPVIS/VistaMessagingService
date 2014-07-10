@@ -5,7 +5,9 @@ include( VistaTestingUtils )
 vista_use_package( VmsBase REQUIRED FIND_DEPENDENCIES)
 vista_use_package( VmsZMQBindings REQUIRED FIND_DEPENDENCIES)
 vista_use_package( ZMQ REQUIRED FIND_DEPENDENCIES)
-vista_use_package( GTest REQUIRED )
+
+include_directories( ${CMAKE_SOURCE_DIR}/gtest-1.7.0/include )
+list(APPEND VISTA_USE_PACKAGE_LIBRARIES gtest gtest_main)
 
 ####
 # configure test for the message vocabulary

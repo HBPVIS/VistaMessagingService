@@ -3,7 +3,13 @@ cmake_minimum_required( VERSION 2.8 )
 
 project( VistaMessagingService )
 
-ENABLE_TESTING()
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/CMake
+                              ${CMAKE_SOURCE_DIR}/CMake/VistaCMakeCommon)
+include(GitExternal)
+
+add_subdirectory(gtest-1.7.0)
+
+enable_testing()
 
 include_directories( ${VflMessaging_SOURCE_DIR} )
 
